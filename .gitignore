@@ -1,0 +1,6 @@
+webdriver/*driver
+__pycache__/
+settings.json
+MAXBOT_ONLINE_ANSWER.txt
+MAXBOT_LAST_URL.txt
+MAXBOT_INT28_IDLE.txt
