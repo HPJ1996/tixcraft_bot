@@ -158,7 +158,7 @@ function area_auto_reload()
             tixcraft_area_main(settings);
         }
     } else {
-        reload=true;
+        reload=false; // disable auto refresh
     }
     
     if(reload) {
