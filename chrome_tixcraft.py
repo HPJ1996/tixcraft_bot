@@ -542,6 +542,8 @@ def load_chromdriver_uc(config_dict):
         # use chromedriver_autodownload instead of uc auto download.
         is_cache_exist =  util.clean_uc_exe_cache()
 
+        fail_1 = True
+        '''
         fail_1 = False
         lanch_uc_with_path = True
         if "macos" in platform.platform().lower():
@@ -566,6 +568,7 @@ def load_chromdriver_uc(config_dict):
                 fail_1 = True
         else:
             fail_1 = True
+        '''
 
         fail_2 = False
         if fail_1:
