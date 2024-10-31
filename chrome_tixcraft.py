@@ -112,7 +112,7 @@ CONST_WEBDRIVER_TYPE_SELENIUM = "selenium"
 CONST_WEBDRIVER_TYPE_UC = "undetected_chromedriver"
 CONST_WEBDRIVER_TYPE_DP = "DrissionPage"
 CONST_WEBDRIVER_TYPE_NODRIVER = "nodriver"
-CONST_CHROME_FAMILY = ["chrome","edge","brave"]
+CONST_CHROME_FAMILY = ["chrome","chrome-beta","edge","brave","brave-beta"]
 CONST_PREFS_DICT = {
     "credentials_enable_service": False, 
     "in_product_help.snoozed_feature.IPH_LiveCaption.is_dismissed": True,
@@ -325,6 +325,16 @@ def get_chrome_options(webdriver_path, config_dict):
         if os.path.exists(brave_path):
             chrome_options.binary_location = brave_path
 
+    if config_dict["browser"]=="brave-beta":
+        brave_beta_path = util.get_brave_beta_bin_path()
+        if os.path.exists(brave_beta_path):
+            chrome_options.binary_location = brave_beta_path
+
+    if config_dict["browser"]=="chrome-beta":
+        chrome_beta_path = util.get_chrome_beta_bin_path()
+        if os.path.exists(chrome_beta_path):
+            chrome_options.binary_location = chrome_beta_path
+
     chrome_options.page_load_strategy = 'eager'
     #chrome_options.page_load_strategy = 'none'
     chrome_options.unhandled_prompt_behavior = "accept"
@@ -487,6 +497,16 @@ def get_uc_options(uc, config_dict, webdriver_path):
         if os.path.exists(brave_path):
             options.binary_location = brave_path
 
+    if config_dict["browser"]=="brave-beta":
+        brave_beta_path = util.get_brave_beta_bin_path()
+        if os.path.exists(brave_beta_path):
+            options.binary_location = brave_beta_path
+
+    if config_dict["browser"]=="chrome-beta":
+        chrome_beta_path = util.get_chrome_beta_bin_path()
+        if os.path.exists(chrome_beta_path):
+            options.binary_location = chrome_beta_path
+
     return options
 
 def load_chromdriver_uc(config_dict):
@@ -648,7 +668,7 @@ def get_driver_by_config(config_dict):
     webdriver_path = os.path.join(Root_Dir, "webdriver")
     #print("platform.system().lower():", platform.system().lower())
 
-    if config_dict["browser"] in ["chrome","brave"]:
+    if config_dict["browser"] in ["chrome","chrome-beta","brave","brave-beta"]:
         # method 6: Selenium Stealth
         if config_dict["webdriver_type"] == CONST_WEBDRIVER_TYPE_SELENIUM:
             driver = load_chromdriver_normal(config_dict, config_dict["webdriver_type"])
@@ -11176,7 +11196,7 @@ def cli():
     parser.add_argument("--browser",
         help="overwrite browser setting",
         default='',
-        choices=['chrome','firefox','edge','safari','brave'],
+        choices=['chrome','chrome-beta','firefox','edge','safari','brave','brave-beta'],
         type=str)
 
     parser.add_argument("--window_size",

@@ -1947,7 +1947,7 @@ def PreferenctTab(root, config_dict, language_code, UI_PADDING_X):
     showHideAreaBlocks()
 
 def AdvancedTab(root, config_dict, language_code, UI_PADDING_X):
-    browser_options = ("chrome","firefox","edge","safari","brave")
+    browser_options = ("chrome","chrome-beta","firefox","edge","safari","brave","brave-beta")
     webdriver_type_options = (CONST_WEBDRIVER_TYPE_SELENIUM, CONST_WEBDRIVER_TYPE_UC)
 
     not_support_python_version = ["3.6.", "3.7.", "3.8."]

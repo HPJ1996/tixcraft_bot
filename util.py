@@ -407,6 +407,11 @@ def get_brave_bin_path():
 
     return brave_path
 
+def get_brave_beta_bin_path():
+    return '/Applications/Brave Browser Beta.app/Contents/MacOS/Brave Browser Beta'
+
+def get_chrome_beta_bin_path():
+    return '/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta'
 
 def dump_settings_to_maxbot_plus_extension(ext, config_dict, CONST_MAXBOT_CONFIG_FILE):
     # sync config.
