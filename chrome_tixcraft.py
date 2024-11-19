@@ -1641,10 +1641,13 @@ def tixcraft_area_auto_select(driver, url, config_dict):
 
         # auto refresh for area list page.
         if is_need_refresh:
+            # disable auto refresh
+            '''
             try:
                 driver.refresh()
             except Exception as exc:
                 pass
+            '''
 
             if config_dict["advanced"]["auto_reload_page_interval"] > 0:
                 time.sleep(config_dict["advanced"]["auto_reload_page_interval"])
