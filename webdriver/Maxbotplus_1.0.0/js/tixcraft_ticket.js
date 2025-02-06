@@ -7,109 +7,10 @@ $('input[type=checkbox]').each(function() {
 $("img[style='width: 100%; padding: 0;']").remove();
 $("footer").remove();
 
-var ticketmaster_ocr_interval = null;
-var ticketmaster_ocr_config = {
-    captcha_length: 4,
-    captcha_selector: "#TicketForm_verifyCode-image",
-    captcha_renew_selector: "#TicketForm_verifyCode-image",
-    input_selector: "#TicketForm_verifyCode",
-    submit_selector: "button[type='submit']"
-};
-
-function get_ticketmaster_ocr_image() {
-    // due to multi format
-    let captcha_selector = ticketmaster_ocr_config.captcha_selector;
-
-    let image_data = "";
-    //console.log(captcha_selector);
-    let img = document.querySelector(captcha_selector);
-    if (img != null) {
-        let canvas = document.createElement('canvas');
-        let context = canvas.getContext('2d');
-        canvas.height = img.naturalHeight;
-        canvas.width = img.naturalWidth;
-        context.drawImage(img, 0, 0);
-        let img_data = canvas.toDataURL();
-        if (img_data) {
-            image_data = img_data.split(",")[1];
-            //console.log(image_data);
-        }
-    } else {
-        // console.log("img not found:" + tzuchi_ocr_config.captcha_selector);
-    }
-    return image_data;
-}
-
-var last_ticketmaster_captcha_answer = "";
-chrome.runtime.onMessage.addListener((message) => {
-    let captcha_renew_selector = ticketmaster_ocr_config.captcha_renew_selector;
-
-    //console.log('sent from background', message);
-    if (message && message.hasOwnProperty("answer")) {
-        let is_valid_anwser = false;
-        if (message.answer.length == ticketmaster_ocr_config.captcha_length) {
-            is_valid_anwser = true;
-        }
-        //console.log(is_valid_anwser);
-        if (is_valid_anwser) {
-            ticketmaster_set_ocr_answer(message.answer);
-            last_ticketmaster_captcha_answer = message.answer;
-        } else {
-            // renew captcha.
-            if (last_ticketmaster_captcha_answer != message.answer) {
-                last_ticketmaster_captcha_answer = message.answer;
-                console.log("renew captcha: " + captcha_renew_selector);
-                if ($(captcha_renew_selector).length) {
-                    $(captcha_renew_selector).click();
-                }
-                ticketmaster_ticket_main();
-            }
-        }
-    }
-});
-
 function checkall() {
     $('input[type=checkbox]:not(:checked)').each(function() {
         $(this).click();
     });
-}
-
-function ticketmaster_set_ocr_answer(answer) {
-    let input_selector = ticketmaster_ocr_config.input_selector;
-    let submit_selector = ticketmaster_ocr_config.submit_selector;
-    //console.log("answer:"+answer);
-    if (answer.length > 0) {
-        let sendkey_by_webdriver = false;
-        if (settings) {
-            if (settings.hasOwnProperty("token")) {
-                sendkey_by_webdriver = true;
-            }
-        }
-        checkall();
-        //console.log("sendkey_by_webdriver:"+sendkey_by_webdriver);
-        if (!sendkey_by_webdriver) {
-            // solution #1: javascript.
-            $(input_selector).val(answer);
-            $(submit_selector).click();
-        } else {
-            // solution #2: click webdriver.
-            webdriver_location_sendkey(settings, input_selector, answer, document.location.href);
-            //webdriver_location_click(settings, submit_selector, document.location.href);
-            $(input_selector).val(answer);
-            $(submit_selector).click();
-        }
-    }
-}
-
-async function ticketmaster_get_ocr_answer(api_url, image_data) {
-    let bundle = {
-        action: 'ocr',
-        data: {
-            'url': api_url + 'ocr',
-            'image_data': image_data,
-        }
-    };
-    const return_answer = await chrome.runtime.sendMessage(bundle);
 }
 
 function ticketmaster_ticketPriceList_clean_exclude(exclude_keyword_array) {
@@ -184,18 +85,6 @@ function ticketmaster_ticketPriceList_ticket_number(price_keyword_array, ticket_
     return is_ticket_number_assign;
 }
 
-function ticketmaster_orc_image_ready(api_url) {
-    let ret = false;
-    let image_data = get_ticketmaster_ocr_image();
-    if (image_data.length > 0) {
-        ret = true;
-        if (ticketmaster_ocr_interval) clearInterval(ticketmaster_ocr_interval);
-        ticketmaster_get_ocr_answer(api_url, image_data);
-    }
-    //console.log("orc_image_ready:"+ret);
-    return ret;
-}
-
 function ticketmaster_ticket_main() {
     let remote_url_string = get_remote_url(settings);
     ticketmaster_ocr_interval = setInterval(() => {
@@ -212,10 +101,8 @@ function ticketmaster_ticket_main() {
 storage.get('settings', function(items) {
     if (items.settings) {
         settings = items.settings;
-
         tixcraft_ticket_clean_exclude(settings);
         tixcraft_assign_ticket_number(settings);
-        ticketmaster_ticket_main();
     }
 });
 
@@ -241,5 +128,11 @@ function tixcraft_assign_ticket_number(settings) {
         }
     }
 
-    return ticketmaster_ticketPriceList_ticket_number(price_keyword_array, settings.ticket_number)
+    let is_ticket_number_assign = ticketmaster_ticketPriceList_ticket_number(price_keyword_array, settings.ticket_number);
+    if (is_ticket_number_assign) {
+        checkall();
+        $("button[type='submit'].btn").click();
+
+    }
+    return is_ticket_number_assign;
 }
