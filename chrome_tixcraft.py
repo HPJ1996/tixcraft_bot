@@ -43,7 +43,7 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "MaxBot (2024.06.07)"
+CONST_APP_VERSION = "MaxBot (2024.07.02)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -2370,7 +2370,19 @@ def tixcraft_ticket_main(driver, config_dict, ocr, Captcha_Browser, domain_name)
 
     # must wait ticket number assign to focus captcha.
     if is_ticket_number_assigned:
-        tixcraft_ticket_main_ocr(driver, config_dict, ocr, Captcha_Browser, domain_name)
+        # allow agree not enable to assign ticket number.
+        form_input = None
+        try:
+            form_input = driver.find_element(By.CSS_SELECTOR, '#TicketForm_verifyCode')
+        except Exception as exc:
+            print("find select fail")
+            pass
+        
+        if form_input is None:
+            next_step_button_css = "button[type='submit'].btn"
+            is_button_clicked = press_button(driver, By.CSS_SELECTOR, next_step_button_css)
+        else:
+            tixcraft_ticket_main_ocr(driver, config_dict, ocr, Captcha_Browser, domain_name)
 
 def tixcraft_ticket_main_ocr(driver, config_dict, ocr, Captcha_Browser, domain_name):
     away_from_keyboard_enable = config_dict["ocr_captcha"]["force_submit"]
