@@ -43,7 +43,7 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "MaxBot (2024.07.02)"
+CONST_APP_VERSION = "MaxBot (2024.07.03)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -78,7 +78,7 @@ CONST_MAXBLOCK_EXTENSION_FILTER =[
 "*sb.scorecardresearch.com/*",
 "*tagtoo.co/*",
 "*ticketmaster.sg/js/adblock*",
-"*ticketmaster.sg/js/adblock.js*",
+"*ticketmaster.sg/js/ads.*",
 "*tixcraft.com/js/analytics.js*",
 "*tixcraft.com/js/common.js*",
 "*tixcraft.com/js/custom.js*",
@@ -750,6 +750,7 @@ def get_driver_by_config(config_dict):
                     '*.rollbar.com/*',
                     '*.twitter.com/i/*',
                     '*/adblock.js',
+                    '*/ads.js',
                     '*/google_ad_block.js',
                     '*anymind360.com/*',
                     '*cdn.cookielaw.org/*',
