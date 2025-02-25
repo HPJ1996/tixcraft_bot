@@ -43,7 +43,7 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "MaxBot (2024.07.03)"
+CONST_APP_VERSION = "MaxBot (2024.07.04)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -57,6 +57,7 @@ CONST_MAXBLOCK_EXTENSION_FILTER =[
 "*.doubleclick.net/*",
 "*.ssp.hinet.net/*",
 "*a.amnet.tw/*",
+"*anymind360.com/*",
 "*adx.c.appier.net/*",
 "*cdn.cookielaw.org/*",
 "*clarity.ms/*",
