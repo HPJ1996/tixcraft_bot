@@ -33,7 +33,7 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "MaxBot (2024.07.04)"
+CONST_APP_VERSION = "MaxBot (2024.07.10)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -351,7 +351,7 @@ async def nodriver_goto_homepage(driver, config_dict):
                     cookie.value=tixcraft_sid
                     is_cookie_exist = True
                     break
-            
+
             is_cookie_changed = False
             if not is_cookie_exist:
                 new_cookie = cdp.network.CookieParam("SID",tixcraft_sid, domain=domain_name, path="/", http_only=True, secure=True)
@@ -365,7 +365,7 @@ async def nodriver_goto_homepage(driver, config_dict):
                         await each_tab.reload()
                 except Exception as exc:
                     print(exc)
-                    pass            
+                    pass
 
     if 'ibon.com' in homepage:
         ibonqware = config_dict["advanced"]["ibonqware"]
@@ -390,8 +390,8 @@ async def nodriver_goto_homepage(driver, config_dict):
                     await each_tab.reload()
             except Exception as exc:
                 print(exc)
-                pass            
-        
+                pass
+
 
     return tab
 
@@ -1515,6 +1515,107 @@ async def nodriver_ibon_ticket_agree(tab):
         if is_finish_checkbox_click:
             break
 
+async def nodriver_ibon_date_auto_select(tab, config_dict, date_keyword_item):
+    show_debug_message = False      # online
+
+    if config_dict["advanced"]["verbose"]:
+        show_debug_message = True
+
+    auto_select_mode = config_dict["date_auto_select"]["mode"]
+
+    is_date_click_by_bot = False
+    is_need_refresh = False
+    is_tr_ready = False
+
+    #data_list = []
+    matched_blocks = []
+    try:
+        select_query = "#divGameInfo > app-game"
+        div_host: Element = await tab.query_selector(select_query)
+        if div_host:
+            if div_host.shadow_roots:
+                iframe: Node = div_host.shadow_roots[0]
+                if iframe:
+                    for lv1 in iframe.children:
+                        if lv1.local_name=='div':
+                            for lv2 in lv1.children:
+                                if lv2.local_name=='div' and 'id' in lv2.attributes and 'GameInfoList' in lv2.attributes:
+                                    for col_12 in lv2.children:
+                                        if col_12.local_name=='div':
+                                            is_tr_ready = True
+                                            for d_flex in col_12.children:
+                                                row_text = ""
+                                                p_button = None
+                                                p_index = -1
+                                                for p in d_flex.children:
+                                                    p_index += 1
+                                                    if p.local_name == 'p':
+                                                        p_text = ""
+                                                        for text_node in p.children:
+                                                            if text_node.node_name=='#text':
+                                                                p_text += text_node.node_value
+
+                                                            if p_index == 3:
+                                                                if text_node.local_name=='button':
+                                                                    if not 'disabled' in text_node.attributes:
+                                                                        p_button = text_node
+                                                        
+                                                        if not p_text is None:
+                                                            p_text = p_text.strip()
+                                                            p_text = p_text.replace(",","")
+                                                            p_text = p_text.upper()
+                                                        row_text += p_text
+
+                                                if p_button is None:
+                                                    row_text = ""
+
+                                                if len(row_text) > 0:
+                                                    if util.reset_row_text_if_match_keyword_exclude(config_dict, row_text):
+                                                        row_text = ""
+
+                                                if len(row_text) > 0:
+                                                    row_text = util.format_keyword_string(row_text)
+
+                                                    is_match_area = False
+                                                    if len(date_keyword_item) > 0:
+                                                        # must match keyword.
+                                                        is_match_area = True
+                                                        date_keyword_array = date_keyword_item.split(' ')
+                                                        for date_keyword in date_keyword_array:
+                                                            date_keyword = util.format_keyword_string(date_keyword)
+                                                            if not date_keyword in row_text:
+                                                                is_match_area = False
+                                                                break
+                                                    else:
+                                                        # without keyword.
+                                                        is_match_area = True
+
+                                                    if is_match_area:
+                                                        matched_blocks.append(p_button)
+    except Exception as exc:
+        print(exc)
+        pass
+
+    if len(matched_blocks) > 0:
+        matched_blocks_count = len(matched_blocks)
+        if show_debug_message:
+            print("matched_blocks count:", matched_blocks_count)
+
+        target_area = util.get_target_item_from_matched_list(matched_blocks, auto_select_mode)
+        if target_area:
+            wrapper: Element = uc.core.element.create(target_area, tab)
+            print("click on button")
+            try:
+                await wrapper.click()
+                is_date_click_by_bot = True
+            except Exception as exc:
+                pass
+    else:
+        if is_tr_ready:
+            is_need_refresh = True
+
+    return is_need_refresh, is_date_click_by_bot
+
 async def nodriver_ibon_area_auto_select(tab, config_dict, area_keyword_item):
     show_debug_message = False      # online
 
@@ -1527,7 +1628,7 @@ async def nodriver_ibon_area_auto_select(tab, config_dict, area_keyword_item):
     is_need_refresh = False
     is_tr_ready = False
 
-    area_list = []
+    data_list = []
     try:
         select_query = "#AreaTable > div"
         div_host: Element = await tab.query_selector(select_query)
@@ -1549,22 +1650,22 @@ async def nodriver_ibon_area_auto_select(tab, config_dict, area_keyword_item):
                                             if 'sold-out' in tr.attributes:
                                                 skip_this_row = True
                                             if not skip_this_row:
-                                                area_list.append(tr)
+                                                data_list.append(tr)
     except Exception as exc:
         print(exc)
         pass
 
 
     matched_blocks = []
-    if len(area_list) > 0:
-        area_list_count = len(area_list)
+    if len(data_list) > 0:
+        area_list_count = len(data_list)
 
         if show_debug_message:
             print("area_list_count:", area_list_count)
             print("area_keyword_item:", area_keyword_item)
 
         # filter list.
-        for row in area_list:
+        for row in data_list:
             row_text = ""
             try:
                 skip_this_row = False
@@ -1572,7 +1673,7 @@ async def nodriver_ibon_area_auto_select(tab, config_dict, area_keyword_item):
                     for text in td.children:
                         if text.local_name=="":
                             row_text += " " + text.node_value
-                            
+
                             if '已售完' == text.node_value:
                                 skip_this_row = True
                             if '座位已被選擇' == text.node_value:
@@ -1641,6 +1742,48 @@ async def nodriver_ibon_area_auto_select(tab, config_dict, area_keyword_item):
             is_need_refresh = True
 
     return is_need_refresh, is_price_assign_by_bot
+
+async def nodriver_ibon_activityinfo(tab, config_dict):
+    show_debug_message = False      # online
+
+    if config_dict["advanced"]["verbose"]:
+        show_debug_message = True
+
+    is_date_click_by_bot = False
+    is_need_refresh = False
+
+    # click price row.
+    date_keyword = config_dict["date_auto_select"]["date_keyword"].strip()
+
+    is_need_refresh = False
+
+    if len(date_keyword) > 0:
+        date_keyword_item = []
+        try:
+            date_keyword_item = json.loads("["+ date_keyword +"]")
+        except Exception as exc:
+            date_keyword_item = []
+
+        for date_keyword_item in date_keyword_item:
+            is_need_refresh, is_date_click_by_bot = await nodriver_ibon_date_auto_select(tab, config_dict, date_keyword_item)
+            if not is_need_refresh:
+                break
+            else:
+                print("is_need_refresh for keyword:", date_keyword_item)
+    else:
+        # empty keyword, match all.
+        is_need_refresh, is_date_click_by_bot = await nodriver_ibon_date_auto_select(tab, config_dict, date_keyword)
+
+    if show_debug_message:
+        print("is_need_refresh:", is_need_refresh)
+
+    if is_need_refresh:
+        try:
+            await tab.reload()
+        except Exception as exc:
+            pass
+
+    return is_date_click_by_bot
 
 async def nodriver_ibon_performance(tab, config_dict):
     show_debug_message = False      # online
@@ -1802,9 +1945,9 @@ async def nodriver_ibon_main(tab, url, config_dict, ocr, Captcha_Browser):
             if is_event_page:
                 if config_dict["date_auto_select"]["enable"]:
                     is_match_target_feature = True
-                    # TODO:
-                    #is_date_assign_by_bot = ibon_date_auto_select(driver, config_dict)
+                    is_date_click_by_bot = await nodriver_ibon_activityinfo(tab, config_dict)
                     pass
+
 
     if 'ibon.com.tw/error.html?' in url.lower():
         try:
@@ -1895,7 +2038,7 @@ if ($main_table.length > 0){{
                         except Exception as exc:
                             print(exc)
                             pass
-    
+
                         try:
                             select_query = "table.table select"
                             ticket_select: Element = await tab.query_selector(select_query)
@@ -2250,7 +2393,7 @@ def get_nodriver_browser_args():
     ]
 
     return browser_args
-    
+
 def get_maxbot_extension_path(extension_folder):
     app_root = util.get_app_root()
     extension_path = "webdriver"
