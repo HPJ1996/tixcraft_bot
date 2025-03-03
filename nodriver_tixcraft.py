@@ -33,7 +33,7 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "MaxBot (2024.07.10)"
+CONST_APP_VERSION = "MaxBot (2024.07.11)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -1783,6 +1783,9 @@ async def nodriver_ibon_activityinfo(tab, config_dict):
         except Exception as exc:
             pass
 
+        if config_dict["advanced"]["auto_reload_page_interval"] > 0:
+            time.sleep(config_dict["advanced"]["auto_reload_page_interval"])
+
     return is_date_click_by_bot
 
 async def nodriver_ibon_performance(tab, config_dict):
@@ -1824,6 +1827,10 @@ async def nodriver_ibon_performance(tab, config_dict):
             await tab.reload()
         except Exception as exc:
             pass
+        
+        if config_dict["advanced"]["auto_reload_page_interval"] > 0:
+            time.sleep(config_dict["advanced"]["auto_reload_page_interval"])
+
 
     return is_price_assign_by_bot
 
