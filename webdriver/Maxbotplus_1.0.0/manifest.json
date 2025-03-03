@@ -235,16 +235,6 @@
         },
         {
             "matches": [
-                "https://ticket.ibon.com.tw/ActivityInfo/Details/*"
-            ],
-            "run_at": "document_start",
-            "js": [
-                "jquery.min.js",
-                "js/ibon_detail.js"
-            ]
-        },
-        {
-            "matches": [
                 "https://ticket.ibon.com.tw/EventBuy/*/*/*"
             ],
             "run_at": "document_end",
