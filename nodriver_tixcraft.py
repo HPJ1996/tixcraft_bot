@@ -18,6 +18,7 @@ import urllib.parse
 import warnings
 import webbrowser
 from datetime import datetime
+from typing import Optional
 
 import nodriver as uc
 from nodriver import cdp
@@ -33,7 +34,7 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "MaxBot (2024.07.11)"
+CONST_APP_VERSION = "MaxBot (2024.07.13)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -198,11 +199,13 @@ def play_sound_while_ordering(config_dict):
     util.play_mp3_async(captcha_sound_filename)
 
 async def nodriver_press_button(tab, select_query):
+    ret = False
     if tab:
         try:
             element = await tab.query_selector(select_query)
             if element:
                 await element.click()
+                ret = True
             else:
                 #print("element not found:", select_query)
                 pass
@@ -210,9 +213,7 @@ async def nodriver_press_button(tab, select_query):
             #print("click fail for selector:", select_query)
             print(e)
             pass
-
-from typing import Optional
-
+    return ret
 
 async def nodriver_check_checkbox(tab: Optional[object], select_query: str, value: str = 'true') -> bool:
     if tab:
@@ -1906,6 +1907,198 @@ async def nodriver_ibon_ocr_span(tab, config_dict, ocr):
         print(exc)
         pass
 
+async def nodriver_get_ibon_question_text(tab):
+    question_text = ""
+    if tab:
+        try:
+            select_query = "#content div[id] p"
+            element = await tab.query_selector(select_query)
+            if element:
+                question_text = element.text
+            else:
+                #print("element not found:", select_query)
+                pass
+        except Exception as e:
+            #print("click fail for selector:", select_query)
+            print(e)
+            pass
+    return question_text
+
+async def nodriver_fill_common_verify_form(tab, config_dict, inferred_answer_string, fail_list, input_text_css, next_step_button_css, submit_by_enter, check_input_interval):
+    show_debug_message = True       # debug.
+    show_debug_message = False      # online
+
+    if config_dict["advanced"]["verbose"]:
+        show_debug_message = True
+
+    form_input_list = []
+    try:
+        form_input_list = await tab.query_selector_all(input_text_css)
+    except Exception as exc:
+        if show_debug_message:
+            print("find verify code input textbox fail")
+        pass
+    if form_input_list is None:
+        form_input_list = []
+
+    form_input_count = len(form_input_list)
+    if show_debug_message:
+        print("input textbox count:", form_input_count)
+
+    is_do_press_next_button = False
+
+    form_input_1 = None
+    form_input_2 = None
+    if form_input_count > 0:
+        form_input_1 = form_input_list[0]
+        if form_input_count > 1:
+            form_input_2 = form_input_list[1]
+
+    is_multi_question_mode = False
+    answer_list = util.get_answer_list_from_user_guess_string(config_dict, CONST_MAXBOT_ANSWER_ONLINE_FILE)
+    if form_input_count == 1:
+        is_do_press_next_button = True
+    else:
+        if form_input_count == 2:
+            if not form_input_2 is None:
+                if len(answer_list) >= 2:
+                    if(len(answer_list[0]) > 0):
+                        if(len(answer_list[1]) > 0):
+                            is_multi_question_mode = True
+
+    inputed_value_1 = None
+    if not form_input_1 is None:
+        try:
+            inputed_value_1 = await form_input_1.apply("(el) => el.value")
+        except Exception as exc:
+            if show_debug_message:
+                print("get_attribute of verify code fail")
+            pass
+    if inputed_value_1 is None:
+        inputed_value_1 = ""
+
+    inputed_value_2 = None
+    if not form_input_2 is None:
+        try:
+            inputed_value_2 = await form_input_2.apply("(el) => el.value")
+        except Exception as exc:
+            if show_debug_message:
+                print("get_attribute of verify code fail")
+            pass
+    if inputed_value_2 is None:
+        inputed_value_2 = ""
+
+    is_answer_sent = False
+    if not is_multi_question_mode:
+        if not form_input_1 is None:
+            if len(inferred_answer_string) > 0:
+                if inputed_value_1 != inferred_answer_string:
+                    try:
+                        # PS: sometime may send key twice...
+                        await form_input_1.click()
+                        await form_input_1.apply('function (element) {element.value = ""; } ')
+                        await form_input_1.send_keys(inferred_answer_string);
+                    except Exception as exc:
+                        if show_debug_message:
+                            print(exc)
+                        pass
+
+                is_button_clicked = False
+                try:
+                    if is_do_press_next_button:
+                        if len(next_step_button_css) > 0:
+                            is_button_clicked = await nodriver_press_button(tab, next_step_button_css)
+                except Exception as exc:
+                    if show_debug_message:
+                        print(exc)
+                    pass
+
+                if is_button_clicked:
+                    is_answer_sent = True
+                    fail_list.append(inferred_answer_string)
+                    if show_debug_message:
+                        print("sent password by bot:", inferred_answer_string, " at #", len(fail_list))
+
+                if is_answer_sent:
+                    for i in range(3):
+                        time.sleep(0.1)
+                        alert_ret = False
+                        #alert_ret = check_pop_alert(driver)
+                        if alert_ret:
+                            if show_debug_message:
+                                print("press accept button at time #", i+1)
+                            break
+            else:
+                # no answer to fill.
+                pass
+
+    else:
+        # multi question mode.
+        try:
+            if inputed_value_1 != answer_list[0]:
+                await form_input_1.click()
+                await form_input_1.apply('function (element) {element.value = ""; } ')
+                await form_input_1.send_keys(answer_list[0]);
+
+            if inputed_value_2 != answer_list[1]:
+                await form_input_2.click()
+                await form_input_2.apply('function (element) {element.value = ""; } ')
+                await form_input_2.send_keys(answer_list[1]);
+            
+            is_button_clicked = False
+            is_button_clicked = await nodriver_press_button(tab, next_step_button_css)
+
+            if is_button_clicked:
+                is_answer_sent = True
+                fail_list.append(answer_list[0])
+                fail_list.append(answer_list[1])
+                if show_debug_message:
+                    print("sent password by bot:", inferred_answer_string, " at #", len(fail_list))
+        except Exception as exc:
+            pass
+
+    return is_answer_sent, fail_list
+
+async def nodriver_ibon_verification_question(tab, fail_list, config_dict):
+    show_debug_message = False      # online
+
+    if config_dict["advanced"]["verbose"]:
+        show_debug_message = True
+
+    answer_list = []
+
+    question_text = await nodriver_get_ibon_question_text(tab)
+    if len(question_text) > 0:
+        js="window.alert = function() {}; window.confirm = function() { return true; }; window.prompt = function() { return null; };"
+        await tab.evaluate(js)
+        write_question_to_file(question_text)
+
+        answer_list = util.get_answer_list_from_user_guess_string(config_dict, CONST_MAXBOT_ANSWER_ONLINE_FILE)
+        if len(answer_list)==0:
+            if config_dict["advanced"]["auto_guess_options"]:
+                answer_list = util.get_answer_list_from_question_string(None, question_text)
+
+        inferred_answer_string = ""
+        if len(answer_list) > 0:
+            for answer_item in answer_list:
+                if not answer_item in fail_list:
+                    inferred_answer_string = answer_item
+                    break
+
+        if show_debug_message:
+            print("inferred_answer_string:", inferred_answer_string)
+            print("answer_list:", answer_list)
+            print("fail_list:", fail_list)
+
+        # PS: auto-focus() when empty inferred_answer_string with empty inputed text value.
+        input_text_css = '#content div.editor-box input'
+        next_step_button_css = '#content div.editor-box a.btn'
+        submit_by_enter = False
+        check_input_interval = 0.2
+        is_answer_sent, fail_list = await nodriver_fill_common_verify_form(tab, config_dict, inferred_answer_string, fail_list, input_text_css, next_step_button_css, submit_by_enter, check_input_interval)
+
+    return fail_list
+
 async def nodriver_ibon_main(tab, url, config_dict, ocr, Captcha_Browser):
     global ibon_dict
     if not 'ibon_dict' in globals():
@@ -1955,7 +2148,6 @@ async def nodriver_ibon_main(tab, url, config_dict, ocr, Captcha_Browser):
                     is_date_click_by_bot = await nodriver_ibon_activityinfo(tab, config_dict)
                     pass
 
-
     if 'ibon.com.tw/error.html?' in url.lower():
         try:
             await tab.back()
@@ -1976,8 +2168,7 @@ async def nodriver_ibon_main(tab, url, config_dict, ocr, Captcha_Browser):
 
         if is_event_page:
             is_enter_verify_mode = True
-            # TODO:
-            #ibon_dict["fail_list"] = ibon_verification_question(driver, ibon_dict["fail_list"], config_dict)
+            ibon_dict["fail_list"] = await nodriver_ibon_verification_question(tab, ibon_dict["fail_list"], config_dict)
             pass
             is_match_target_feature = True
 
@@ -2810,7 +3001,6 @@ async def main(args):
                 Element.prototype.attachShadow = function (params) {
                     return this._as({mode: "open"})
                 };"""))
-
             tab = await nodriver_goto_homepage(driver, config_dict)
             tab = await nodrver_block_urls(tab, config_dict)
             if not config_dict["advanced"]["headless"]:

@@ -6,6 +6,7 @@ import requests
 from PIL import Image
 from requests.exceptions import RequestException
 
+
 class NonBrowser:
     def __init__(self, domain_name: str = "tixcraft.com") -> None:
         self.session = requests.Session()
