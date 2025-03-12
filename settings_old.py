@@ -1066,16 +1066,16 @@ def btn_save_act(slience_mode=False):
         config_dict["advanced"]["tixcraft_sid"] = config_dict["advanced"]["tixcraft_sid"]
         config_dict["advanced"]["ibonqware"] = config_dict["advanced"]["ibonqware"]
 
-        config_dict["advanced"]["facebook_password"] = util.encryptMe(config_dict["advanced"]["facebook_password"])
-        config_dict["advanced"]["kktix_password"] = util.encryptMe(config_dict["advanced"]["kktix_password"])
-        config_dict["advanced"]["fami_password"] = util.encryptMe(config_dict["advanced"]["fami_password"])
-        config_dict["advanced"]["cityline_password"] = util.encryptMe(config_dict["advanced"]["cityline_password"])
-        config_dict["advanced"]["urbtix_password"] = util.encryptMe(config_dict["advanced"]["urbtix_password"])
-        config_dict["advanced"]["hkticketing_password"] = util.encryptMe(config_dict["advanced"]["hkticketing_password"])
-        config_dict["advanced"]["kham_password"] = util.encryptMe(config_dict["advanced"]["kham_password"])
-        config_dict["advanced"]["ticket_password"] = util.encryptMe(config_dict["advanced"]["ticket_password"])
-        config_dict["advanced"]["udn_password"] = util.encryptMe(config_dict["advanced"]["udn_password"])
-        config_dict["advanced"]["ticketplus_password"] = util.encryptMe(config_dict["advanced"]["ticketplus_password"])
+        config_dict["advanced"]["facebook_password"] = util.encrypt_me(config_dict["advanced"]["facebook_password"])
+        config_dict["advanced"]["kktix_password"] = util.encrypt_me(config_dict["advanced"]["kktix_password"])
+        config_dict["advanced"]["fami_password"] = util.encrypt_me(config_dict["advanced"]["fami_password"])
+        config_dict["advanced"]["cityline_password"] = util.encrypt_me(config_dict["advanced"]["cityline_password"])
+        config_dict["advanced"]["urbtix_password"] = util.encrypt_me(config_dict["advanced"]["urbtix_password"])
+        config_dict["advanced"]["hkticketing_password"] = util.encrypt_me(config_dict["advanced"]["hkticketing_password"])
+        config_dict["advanced"]["kham_password"] = util.encrypt_me(config_dict["advanced"]["kham_password"])
+        config_dict["advanced"]["ticket_password"] = util.encrypt_me(config_dict["advanced"]["ticket_password"])
+        config_dict["advanced"]["udn_password"] = util.encrypt_me(config_dict["advanced"]["udn_password"])
+        config_dict["advanced"]["ticketplus_password"] = util.encrypt_me(config_dict["advanced"]["ticketplus_password"])
 
         config_dict["advanced"]["chrome_extension"] = bool(chk_state_chrome_extension.get())
         config_dict["advanced"]["disable_adjacent_seat"] = bool(chk_state_adjacent_seat.get())
@@ -2456,7 +2456,7 @@ def AutofillTab(root, config_dict, language_code, UI_PADDING_X):
     txt_facebook_account.grid(column=1, row=group_row_count, sticky = W)
 
     global txt_facebook_password
-    txt_facebook_password_value = StringVar(frame_group_header, value=util.decryptMe(config_dict["advanced"]["facebook_password"].strip()))
+    txt_facebook_password_value = StringVar(frame_group_header, value=util.decrypt_me(config_dict["advanced"]["facebook_password"].strip()))
     txt_facebook_password = Entry(frame_group_header, width=15, textvariable = txt_facebook_password_value, show="*")
     txt_facebook_password.grid(column=2, row=group_row_count, sticky = W)
 
@@ -2472,7 +2472,7 @@ def AutofillTab(root, config_dict, language_code, UI_PADDING_X):
     txt_kktix_account.grid(column=1, row=group_row_count, sticky = W)
 
     global txt_kktix_password
-    txt_kktix_password_value = StringVar(frame_group_header, value=util.decryptMe(config_dict["advanced"]["kktix_password"].strip()))
+    txt_kktix_password_value = StringVar(frame_group_header, value=util.decrypt_me(config_dict["advanced"]["kktix_password"].strip()))
     txt_kktix_password = Entry(frame_group_header, width=15, textvariable = txt_kktix_password_value, show="*")
     txt_kktix_password.grid(column=2, row=group_row_count, sticky = W)
 
@@ -2488,7 +2488,7 @@ def AutofillTab(root, config_dict, language_code, UI_PADDING_X):
     txt_fami_account.grid(column=1, row=group_row_count, sticky = W)
 
     global txt_fami_password
-    txt_fami_password_value = StringVar(frame_group_header, value=util.decryptMe(config_dict["advanced"]["fami_password"].strip()))
+    txt_fami_password_value = StringVar(frame_group_header, value=util.decrypt_me(config_dict["advanced"]["fami_password"].strip()))
     txt_fami_password = Entry(frame_group_header, width=15, textvariable = txt_fami_password_value, show="*")
     txt_fami_password.grid(column=2, row=group_row_count, sticky = W)
 
@@ -2504,7 +2504,7 @@ def AutofillTab(root, config_dict, language_code, UI_PADDING_X):
     txt_cityline_account.grid(column=1, row=group_row_count, sticky = W, columnspan=2)
 
     global txt_cityline_password
-    txt_cityline_password_value = StringVar(frame_group_header, value=util.decryptMe(config_dict["advanced"]["cityline_password"].strip()))
+    txt_cityline_password_value = StringVar(frame_group_header, value=util.decrypt_me(config_dict["advanced"]["cityline_password"].strip()))
     txt_cityline_password = Entry(frame_group_header, width=15, textvariable = txt_cityline_password_value, show="*")
     #txt_cityline_password.grid(column=2, row=group_row_count, sticky = W)
 
@@ -2520,7 +2520,7 @@ def AutofillTab(root, config_dict, language_code, UI_PADDING_X):
     txt_urbtix_account.grid(column=1, row=group_row_count, sticky = W)
 
     global txt_urbtix_password
-    txt_urbtix_password_value = StringVar(frame_group_header, value=util.decryptMe(config_dict["advanced"]["urbtix_password"].strip()))
+    txt_urbtix_password_value = StringVar(frame_group_header, value=util.decrypt_me(config_dict["advanced"]["urbtix_password"].strip()))
     txt_urbtix_password = Entry(frame_group_header, width=15, textvariable = txt_urbtix_password_value, show="*")
     txt_urbtix_password.grid(column=2, row=group_row_count, sticky = W)
 
@@ -2536,7 +2536,7 @@ def AutofillTab(root, config_dict, language_code, UI_PADDING_X):
     txt_hkticketing_account.grid(column=1, row=group_row_count, sticky = W)
 
     global txt_hkticketing_password
-    txt_hkticketing_password_value = StringVar(frame_group_header, value=util.decryptMe(config_dict["advanced"]["hkticketing_password"].strip()))
+    txt_hkticketing_password_value = StringVar(frame_group_header, value=util.decrypt_me(config_dict["advanced"]["hkticketing_password"].strip()))
     txt_hkticketing_password = Entry(frame_group_header, width=15, textvariable = txt_hkticketing_password_value, show="*")
     txt_hkticketing_password.grid(column=2, row=group_row_count, sticky = W)
 
@@ -2552,7 +2552,7 @@ def AutofillTab(root, config_dict, language_code, UI_PADDING_X):
     txt_kham_account.grid(column=1, row=group_row_count, sticky = W)
 
     global txt_kham_password
-    txt_kham_password_value = StringVar(frame_group_header, value=util.decryptMe(config_dict["advanced"]["kham_password"].strip()))
+    txt_kham_password_value = StringVar(frame_group_header, value=util.decrypt_me(config_dict["advanced"]["kham_password"].strip()))
     txt_kham_password = Entry(frame_group_header, width=15, textvariable = txt_kham_password_value, show="*")
     txt_kham_password.grid(column=2, row=group_row_count, sticky = W)
 
@@ -2568,7 +2568,7 @@ def AutofillTab(root, config_dict, language_code, UI_PADDING_X):
     txt_ticket_account.grid(column=1, row=group_row_count, sticky = W)
 
     global txt_ticket_password
-    txt_ticket_password_value = StringVar(frame_group_header, value=util.decryptMe(config_dict["advanced"]["ticket_password"].strip()))
+    txt_ticket_password_value = StringVar(frame_group_header, value=util.decrypt_me(config_dict["advanced"]["ticket_password"].strip()))
     txt_ticket_password = Entry(frame_group_header, width=15, textvariable = txt_ticket_password_value, show="*")
     txt_ticket_password.grid(column=2, row=group_row_count, sticky = W)
 
@@ -2584,7 +2584,7 @@ def AutofillTab(root, config_dict, language_code, UI_PADDING_X):
     txt_udn_account.grid(column=1, row=group_row_count, sticky = W)
 
     global txt_udn_password
-    txt_udn_password_value = StringVar(frame_group_header, value=util.decryptMe(config_dict["advanced"]["udn_password"].strip()))
+    txt_udn_password_value = StringVar(frame_group_header, value=util.decrypt_me(config_dict["advanced"]["udn_password"].strip()))
     txt_udn_password = Entry(frame_group_header, width=15, textvariable = txt_udn_password_value, show="*")
     txt_udn_password.grid(column=2, row=group_row_count, sticky = W)
 
@@ -2600,7 +2600,7 @@ def AutofillTab(root, config_dict, language_code, UI_PADDING_X):
     txt_ticketplus_account.grid(column=1, row=group_row_count, sticky = W)
 
     global txt_ticketplus_password
-    txt_ticketplus_password_value = StringVar(frame_group_header, value=util.decryptMe(config_dict["advanced"]["ticketplus_password"].strip()))
+    txt_ticketplus_password_value = StringVar(frame_group_header, value=util.decrypt_me(config_dict["advanced"]["ticketplus_password"].strip()))
     txt_ticketplus_password = Entry(frame_group_header, width=15, textvariable = txt_ticketplus_password_value, show="*")
     txt_ticketplus_password.grid(column=2, row=group_row_count, sticky = W)
 

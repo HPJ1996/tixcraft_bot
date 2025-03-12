@@ -52,134 +52,103 @@ def get_ip_address():
     return ip
 
 def is_connectable(port: int, host: Optional[str] = "localhost") -> bool:
-    """Tries to connect to the server at port to see if it is running.
-
-    :Args:
-     - port - The port to connect.
-    """
-    socket_ = None
-    _is_connectable_exceptions = (socket.error, ConnectionResetError)
+    """Checks if a port is connectable."""
     try:
-        socket_ = socket.create_connection((host, port), 1)
-        result = True
-    except _is_connectable_exceptions:
-        result = False
-    finally:
-        if socket_:
-            socket_.close()
-    return result
+        with socket.create_connection((host, port), timeout=1):
+            return True
+    except (socket.error, ConnectionResetError):
+        return False
 
-def remove_html_tags(text):
-    ret = ""
-    if not text is None:
-        clean = re.compile('<.*?>')
-        ret = re.sub(clean, '', text)
-        ret = ret.strip()
-    return ret
+def remove_html_tags(text: Optional[str]) -> str:
+    """Removes HTML tags from a string."""
+    if text is None:
+        return ""
+    clean = re.compile("<.*?>")
+    return re.sub(clean, "", text).strip()
 
-# common functions.
-def find_between( s, first, last ):
-    ret = ""
+def find_between(s: str, first: str, last: str) -> str:
+    """Finds a substring between two delimiters."""
     try:
-        start = s.index( first ) + len( first )
-        end = s.index( last, start )
-        ret = s[start:end]
+        start = s.index(first) + len(first)
+        end = s.index(last, start)
+        return s[start:end]
     except ValueError:
-        pass
-    return ret
+        return ""
 
-def sx(s1):
-    key=18
-    return ''.join(chr(ord(a) ^ key) for a in s1)
+def sx(s1: str) -> str:
+    """XOR encryption/decryption."""
+    key = 18
+    return "".join(chr(ord(a) ^ key) for a in s1)
 
-def decryptMe(b):
-    s=""
-    if(len(b)>0):
-        s=sx(base64.b64decode(b).decode("UTF-8"))
-    return s
+def decrypt_me(b: str) -> str:
+    """Decrypts a base64 encoded string."""
+    if not b:
+        return ""
+    return sx(base64.b64decode(b).decode("UTF-8"))
 
-def encryptMe(s):
-    data=""
-    if(len(s)>0):
-        data=base64.b64encode(sx(s).encode('UTF-8')).decode("UTF-8")
-    return data
+def encrypt_me(s: str) -> str:
+    """Encrypts a string to base64."""
+    if not s:
+        return ""
+    return base64.b64encode(sx(s).encode("UTF-8")).decode("UTF-8")
 
-def is_arm():
-    ret = False
-    if "-arm" in platform.platform():
-        ret = True
-    return ret
+def is_arm() -> bool:
+    """Checks if the platform is ARM."""
+    return "-arm" in platform.platform().lower()
 
-def get_app_root():
-    app_root = ""
-    if hasattr(sys, 'frozen'):
-        basis = sys.executable
-        app_root = os.path.dirname(basis)
-    else:
-        app_root = os.getcwd()
-    return app_root
+def get_app_root() -> str:
+    """Gets the application root directory."""
+    if hasattr(sys, "frozen"):
+        return os.path.dirname(sys.executable)
+    return os.getcwd()
 
-
-def format_config_keyword_for_json(user_input):
-    if len(user_input) > 0:
-        if not ('\"' in user_input):
-            user_input = '"' + user_input + '"'
-
-        if user_input[:1]=="{" and user_input[-1:]=="}":
-            tmp_json = {}
-            try:
-                tmp_json = json.loads(user_input)
-                key=list(tmp_json.keys())[0]
-                first_item=tmp_json[key]
-                user_input=json.dumps(first_item)
-            except Exception as exc:
-                pass
-
-        if user_input[:1]=="[" and user_input[-1:]=="]":
-            user_input=user_input[1:]
-            user_input=user_input[:-1]
+def format_config_keyword_for_json(user_input: str) -> str:
+    """Formats a keyword string for JSON."""
+    if not user_input:
+        return ""
+    if '"' not in user_input:
+        user_input = f'"{user_input}"'
+    if user_input.startswith("{") and user_input.endswith("}"):
+        try:
+            tmp_json = json.loads(user_input)
+            key = list(tmp_json.keys())[0]
+            user_input = json.dumps(tmp_json[key])
+        except json.JSONDecodeError:
+            pass
+    if user_input.startswith("[") and user_input.endswith("]"):
+        user_input = user_input[1:-1]
     return user_input
 
-def is_text_match_keyword(keyword_string, text):
-    is_match_keyword = True
-    if len(keyword_string) > 0 and len(text) > 0:
+def is_text_match_keyword(keyword_string: str, text: str) -> bool:
+    """Checks if text matches a keyword."""
+    if not keyword_string or not text:
+        return True
 
-        # directly input text into arrray field.
-        if len(keyword_string) > 0:
-            if not '"' in keyword_string:
-                keyword_string = '"' + keyword_string + '"'
-        
-        is_match_keyword = False
-        keyword_array = []
-        try:
-            keyword_array = json.loads("["+ keyword_string +"]")
-        except Exception as exc:
-            keyword_array = []
-        for item_list in keyword_array:
-            if len(item_list) > 0:
-                if ' ' in item_list:
-                    keyword_item_array = item_list.split(' ')
-                    is_match_all = True
-                    for each_item in keyword_item_array:
-                        if not each_item in text:
-                            is_match_all = False
-                    if is_match_all:
-                        is_match_keyword = True
-                else:
-                    if item_list in text:
-                        is_match_keyword = True
-            else:
-                is_match_keyword = True
-            if is_match_keyword:
-                break
-    return is_match_keyword
+    if '"' not in keyword_string:
+        keyword_string = f'"{keyword_string}"'
 
-def save_json(config_dict, target_path):
-    json_str = json.dumps(config_dict, indent=4)
     try:
-        with open(target_path, 'w') as outfile:
-            outfile.write(json_str)
-    except Exception as e:
+        keyword_array = json.loads(f"[{keyword_string}]")
+    except json.JSONDecodeError:
+        return False
+
+    for item_list in keyword_array:
+        if not item_list:
+            continue
+        if " " in item_list:
+            keyword_items = item_list.split(" ")
+            if all(item in text for item in keyword_items):
+                return True
+        elif item_list in text:
+            return True
+    return False
+
+def save_json(config_dict: dict, target_path: str) -> None:
+    """Saves a dictionary to a JSON file."""
+    try:
+        with open(target_path, "w") as outfile:
+            json.dump(config_dict, outfile, indent=4)
+    except Exception:
         pass
 
 def write_string_to_file(filename, data):
@@ -192,56 +161,30 @@ def write_string_to_file(filename, data):
     if not outfile is None:
         outfile.write("%s" % data)
 
-def save_url_to_file(remote_url, CONST_MAXBOT_ANSWER_ONLINE_FILE, force_write = False, timeout=0.5):
-    html_text = ""
-    if len(remote_url) > 0:
-        html_result = None
-        try:
-            html_result = requests.get(remote_url , timeout=timeout, allow_redirects=False)
-        except Exception as exc:
-            html_result = None
-            #print(exc)
-        if not html_result is None:
-            status_code = html_result.status_code
-            #print("status_code:", status_code)
-            if status_code == 200:
-                html_text = html_result.text
-                #print("html_text:", html_text)
-
-    is_write_to_file = False
-    if force_write:
-        is_write_to_file = True
-    if len(html_text) > 0:
-        is_write_to_file = True
-
-    if is_write_to_file:
-        html_text = format_config_keyword_for_json(html_text)
-        working_dir = os.path.dirname(os.path.realpath(__file__))
-        target_path = os.path.join(working_dir, CONST_MAXBOT_ANSWER_ONLINE_FILE)
-        write_string_to_file(target_path, html_text)
-    return is_write_to_file
-
-def wget(url, headers=None):
-    html_text = None
-    html_result = None
-    #print("url:", url)
-
+def save_url_to_file(remote_url: str, target_file: str, force_write: bool = False, timeout: float = 0.5) -> bool:
+    """Saves the content of a URL to a file."""
     try:
-        if not headers is None:
-            html_result = requests.get(url , headers=headers, timeout=0.5, allow_redirects=False)
-        else:
-            html_result = requests.get(url , timeout=0.5, allow_redirects=False)
-    except Exception as exc:
-        html_result = None
-        print("send url request fail:")
-        print(exc)
+        response = requests.get(remote_url, timeout=timeout, allow_redirects=False)
+        response.raise_for_status()
+        html_text = response.text
+        if force_write or html_text:
+            html_text = format_config_keyword_for_json(html_text)
+            target_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), target_file)
+            write_string_to_file(target_path, html_text)
+            return True
+    except requests.exceptions.RequestException as exc:
+        print(f"Error fetching URL: {exc}")
+    return False
 
-    if not html_result is None:
-        status_code = html_result.status_code
-        #print("status_code:",status_code)
-        if status_code == 200:
-            html_text = html_result.text
-    return html_text
+def wget(url: str, headers: Optional[dict] = None) -> Optional[str]:
+    """Downloads the content of a URL."""
+    try:
+        response = requests.get(url, headers=headers, timeout=0.5, allow_redirects=False)
+        response.raise_for_status()
+        return response.text
+    except requests.exceptions.RequestException as exc:
+        print(f"Error fetching URL: {exc}")
+        return None
 
 def play_mp3_async(sound_filename):
     threading.Thread(target=play_mp3, args=(sound_filename,)).start()
@@ -260,14 +203,12 @@ def play_mp3(sound_filename):
             except Exception as exc2:
                 pass
 
-
 def force_remove_file(filepath):
     if os.path.exists(filepath):
         try:
             os.remove(filepath)
         except Exception as exc:
             pass
-
 
 def clean_uc_exe_cache():
     exe_name = "chromedriver%s"
@@ -307,64 +248,54 @@ def clean_uc_exe_cache():
 
     return is_cache_exist
 
-def t_or_f(arg):
-    ret = False
-    ua = str(arg).upper()
-    if 'TRUE'.startswith(ua):
-        ret = True
-    elif 'YES'.startswith(ua):
-        ret = True
-    return ret
+def to_bool(value):
+    """將字串轉換為布林值。支援 'true', 'yes' (忽略大小寫)。"""
+    if not isinstance(value, str):
+        return False  # 如果不是字串，直接返回 False
+
+    lower_value = value.lower()
+    return lower_value.startswith('true') or lower_value.startswith('yes')
 
 def format_keyword_string(keyword):
-    if not keyword is None:
-        if len(keyword) > 0:
-            keyword = keyword.replace('／','/')
-            keyword = keyword.replace('　','')
-            keyword = keyword.replace(',','')
-            keyword = keyword.replace('，','')
-            keyword = keyword.replace('$','')
-            keyword = keyword.replace(' ','').lower()
+    """格式化關鍵字字串：替換、移除特定字元並轉換為小寫。"""
+    if not keyword:
+        return keyword
+
+    replacements = {'／': '/', '　': '', ',': '', '，': '', '$': ''}
+    for old, new in replacements.items():
+        keyword = keyword.replace(old, new)
+
+    keyword = re.sub(r'\s+', '', keyword).lower()  # 移除空白字元並轉換為小寫
     return keyword
 
-def format_quota_string(formated_html_text):
-    formated_html_text = formated_html_text.replace('「','【')
-    formated_html_text = formated_html_text.replace('『','【')
-    formated_html_text = formated_html_text.replace('〔','【')
-    formated_html_text = formated_html_text.replace('﹝','【')
-    formated_html_text = formated_html_text.replace('〈','【')
-    formated_html_text = formated_html_text.replace('《','【')
-    formated_html_text = formated_html_text.replace('［','【')
-    formated_html_text = formated_html_text.replace('〖','【')
-    formated_html_text = formated_html_text.replace('[','【')
-    formated_html_text = formated_html_text.replace('（','【')
-    formated_html_text = formated_html_text.replace('(','【')
+def format_quota_string(text):
+    """將多種引號替換為統一的引號。"""
+    if not text:
+        return text
 
-    formated_html_text = formated_html_text.replace('」','】')
-    formated_html_text = formated_html_text.replace('』','】')
-    formated_html_text = formated_html_text.replace('〕','】')
-    formated_html_text = formated_html_text.replace('﹞','】')
-    formated_html_text = formated_html_text.replace('〉','】')
-    formated_html_text = formated_html_text.replace('》','】')
-    formated_html_text = formated_html_text.replace('］','】')
-    formated_html_text = formated_html_text.replace('〗','】')
-    formated_html_text = formated_html_text.replace(']','】')
-    formated_html_text = formated_html_text.replace('）','】')
-    formated_html_text = formated_html_text.replace(')','】')
-    return formated_html_text
+    replacements = {
+        '「': '【', '『': '【', '〔': '【', '﹝': '【', '〈': '【', '《': '【', '［': '【', '〖': '【', '[': '【', '（': '【', '(': '【',
+        '」': '】', '』': '】', '〕': '】', '﹞': '】', '〉': '】', '》': '】', '］': '】', '〗': '】', ']': '】', '）': '】', ')': '】'
+    }
 
-def full2half(keyword):
-    n = ""
-    if not keyword is None:
-        if len(keyword) > 0:
-            for char in keyword:
-                num = ord(char)
-                if num == 0x3000:
-                    num = 32
-                elif 0xFF01 <= num <= 0xFF5E:
-                    num -= 0xfee0
-                n += chr(num)
-    return n
+    for old, new in replacements.items():
+        text = text.replace(old, new)
+    return text
+
+def full2half(text):
+    """將全形字元轉換為半形字元。"""
+    if not text:
+        return text
+
+    result = ''
+    for char in text:
+        num = ord(char)
+        if num == 0x3000:
+            num = 32
+        elif 0xFF01 <= num <= 0xFF5E:
+            num -= 0xfee0
+        result += chr(num)
+    return result
 
 def get_chinese_numeric():
     my_dict = {}

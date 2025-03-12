@@ -232,29 +232,29 @@ def reset_json():
     return config_filepath, config_dict
 
 def decrypt_password(config_dict):
-    config_dict["advanced"]["facebook_password"] = util.decryptMe(config_dict["advanced"]["facebook_password"])
-    config_dict["advanced"]["kktix_password"] = util.decryptMe(config_dict["advanced"]["kktix_password"])
-    config_dict["advanced"]["fami_password"] = util.decryptMe(config_dict["advanced"]["fami_password"])
-    config_dict["advanced"]["cityline_password"] = util.decryptMe(config_dict["advanced"]["cityline_password"])
-    config_dict["advanced"]["urbtix_password"] = util.decryptMe(config_dict["advanced"]["urbtix_password"])
-    config_dict["advanced"]["hkticketing_password"] = util.decryptMe(config_dict["advanced"]["hkticketing_password"])
-    config_dict["advanced"]["kham_password"] = util.decryptMe(config_dict["advanced"]["kham_password"])
-    config_dict["advanced"]["ticket_password"] = util.decryptMe(config_dict["advanced"]["ticket_password"])
-    config_dict["advanced"]["udn_password"] = util.decryptMe(config_dict["advanced"]["udn_password"])
-    config_dict["advanced"]["ticketplus_password"] = util.decryptMe(config_dict["advanced"]["ticketplus_password"])
+    config_dict["advanced"]["facebook_password"] = util.decrypt_me(config_dict["advanced"]["facebook_password"])
+    config_dict["advanced"]["kktix_password"] = util.decrypt_me(config_dict["advanced"]["kktix_password"])
+    config_dict["advanced"]["fami_password"] = util.decrypt_me(config_dict["advanced"]["fami_password"])
+    config_dict["advanced"]["cityline_password"] = util.decrypt_me(config_dict["advanced"]["cityline_password"])
+    config_dict["advanced"]["urbtix_password"] = util.decrypt_me(config_dict["advanced"]["urbtix_password"])
+    config_dict["advanced"]["hkticketing_password"] = util.decrypt_me(config_dict["advanced"]["hkticketing_password"])
+    config_dict["advanced"]["kham_password"] = util.decrypt_me(config_dict["advanced"]["kham_password"])
+    config_dict["advanced"]["ticket_password"] = util.decrypt_me(config_dict["advanced"]["ticket_password"])
+    config_dict["advanced"]["udn_password"] = util.decrypt_me(config_dict["advanced"]["udn_password"])
+    config_dict["advanced"]["ticketplus_password"] = util.decrypt_me(config_dict["advanced"]["ticketplus_password"])
     return config_dict
 
 def encrypt_password(config_dict):
-    config_dict["advanced"]["facebook_password"] = util.encryptMe(config_dict["advanced"]["facebook_password"])
-    config_dict["advanced"]["kktix_password"] = util.encryptMe(config_dict["advanced"]["kktix_password"])
-    config_dict["advanced"]["fami_password"] = util.encryptMe(config_dict["advanced"]["fami_password"])
-    config_dict["advanced"]["cityline_password"] = util.encryptMe(config_dict["advanced"]["cityline_password"])
-    config_dict["advanced"]["urbtix_password"] = util.encryptMe(config_dict["advanced"]["urbtix_password"])
-    config_dict["advanced"]["hkticketing_password"] = util.encryptMe(config_dict["advanced"]["hkticketing_password"])
-    config_dict["advanced"]["kham_password"] = util.encryptMe(config_dict["advanced"]["kham_password"])
-    config_dict["advanced"]["ticket_password"] = util.encryptMe(config_dict["advanced"]["ticket_password"])
-    config_dict["advanced"]["udn_password"] = util.encryptMe(config_dict["advanced"]["udn_password"])
-    config_dict["advanced"]["ticketplus_password"] = util.encryptMe(config_dict["advanced"]["ticketplus_password"])
+    config_dict["advanced"]["facebook_password"] = util.encrypt_me(config_dict["advanced"]["facebook_password"])
+    config_dict["advanced"]["kktix_password"] = util.encrypt_me(config_dict["advanced"]["kktix_password"])
+    config_dict["advanced"]["fami_password"] = util.encrypt_me(config_dict["advanced"]["fami_password"])
+    config_dict["advanced"]["cityline_password"] = util.encrypt_me(config_dict["advanced"]["cityline_password"])
+    config_dict["advanced"]["urbtix_password"] = util.encrypt_me(config_dict["advanced"]["urbtix_password"])
+    config_dict["advanced"]["hkticketing_password"] = util.encrypt_me(config_dict["advanced"]["hkticketing_password"])
+    config_dict["advanced"]["kham_password"] = util.encrypt_me(config_dict["advanced"]["kham_password"])
+    config_dict["advanced"]["ticket_password"] = util.encrypt_me(config_dict["advanced"]["ticket_password"])
+    config_dict["advanced"]["udn_password"] = util.encrypt_me(config_dict["advanced"]["udn_password"])
+    config_dict["advanced"]["ticketplus_password"] = util.encrypt_me(config_dict["advanced"]["ticketplus_password"])
     return config_dict
 
 def maxbot_idle():

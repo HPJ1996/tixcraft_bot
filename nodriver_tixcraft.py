@@ -256,7 +256,7 @@ async def nodriver_kktix_signin(tab, url, config_dict):
     kktix_account = config_dict["advanced"]["kktix_account"]
     kktix_password = config_dict["advanced"]["kktix_password_plaintext"].strip()
     if kktix_password == "":
-        kktix_password = util.decryptMe(config_dict["advanced"]["kktix_password"])
+        kktix_password = util.decrypt_me(config_dict["advanced"]["kktix_password"])
     if len(kktix_account) > 4:
         try:
             account = await tab.query_selector("#user_login")
@@ -986,7 +986,7 @@ async def nodriver_kktix_main(tab, url, config_dict):
                 kktix_account = config_dict["advanced"]["kktix_account"]
                 kktix_password = config_dict["advanced"]["kktix_password_plaintext"].strip()
                 if kktix_password == "":
-                    kktix_password = util.decryptMe(config_dict["advanced"]["kktix_password"])
+                    kktix_password = util.decrypt_me(config_dict["advanced"]["kktix_password"])
 
                 print("基本資料(或實名制)網址:", url)
                 if len(kktix_account) > 0:
@@ -1291,7 +1291,7 @@ async def nodriver_ticketplus_account_sign_in(tab, config_dict):
     ticketplus_account = config_dict["advanced"]["ticketplus_account"]
     ticketplus_password = config_dict["advanced"]["ticketplus_password_plaintext"].strip()
     if ticketplus_password == "":
-        ticketplus_password = util.decryptMe(config_dict["advanced"]["ticketplus_password"])
+        ticketplus_password = util.decrypt_me(config_dict["advanced"]["ticketplus_password"])
 
     # manually keyin verify code.
     country_code = ""
@@ -2548,7 +2548,7 @@ async def nodriver_facebook_main(tab, config_dict):
     facebook_account = config_dict["advanced"]["facebook_account"].strip()
     facebook_password = config_dict["advanced"]["facebook_password_plaintext"].strip()
     if facebook_password == "":
-        facebook_password = util.decryptMe(config_dict["advanced"]["facebook_password"])
+        facebook_password = util.decrypt_me(config_dict["advanced"]["facebook_password"])
     if len(facebook_account) > 4:
         await nodriver_facebook_login(tab, facebook_account, facebook_password)
 

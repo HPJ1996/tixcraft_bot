@@ -6090,7 +6090,7 @@ def kktix_paused_main(driver, url, config_dict):
         kktix_account = config_dict["advanced"]["kktix_account"]
         kktix_password = config_dict["advanced"]["kktix_password_plaintext"].strip()
         if kktix_password == "":
-            kktix_password = util.decryptMe(config_dict["advanced"]["kktix_password"])
+            kktix_password = util.decrypt_me(config_dict["advanced"]["kktix_password"])
         if len(kktix_account) > 4:
             kktix_login(driver, kktix_account, kktix_password)
         is_url_contain_sign_in = True
@@ -6134,7 +6134,7 @@ def kktix_main(driver, url, config_dict):
         kktix_account = config_dict["advanced"]["kktix_account"]
         kktix_password = config_dict["advanced"]["kktix_password_plaintext"].strip()
         if kktix_password == "":
-            kktix_password = util.decryptMe(config_dict["advanced"]["kktix_password"])
+            kktix_password = util.decrypt_me(config_dict["advanced"]["kktix_password"])
         if len(kktix_account) > 0:
             kktix_login(driver, kktix_account, kktix_password)
         is_url_contain_sign_in = True
@@ -6212,7 +6212,7 @@ def kktix_main(driver, url, config_dict):
                 kktix_account = config_dict["advanced"]["kktix_account"]
                 kktix_password = config_dict["advanced"]["kktix_password_plaintext"].strip()
                 if kktix_password == "":
-                    kktix_password = util.decryptMe(config_dict["advanced"]["kktix_password"])
+                    kktix_password = util.decrypt_me(config_dict["advanced"]["kktix_password"])
 
                 print("基本資料(或實名制)網址:", url)
                 if len(kktix_account) > 0:
@@ -6260,7 +6260,7 @@ def famiticket_main(driver, url, config_dict):
         fami_account = config_dict["advanced"]["fami_account"]
         fami_password = config_dict["advanced"]["fami_password_plaintext"].strip()
         if fami_password == "":
-            fami_password = util.decryptMe(config_dict["advanced"]["fami_password"])
+            fami_password = util.decrypt_me(config_dict["advanced"]["fami_password"])
         if len(fami_account) > 4:
             fami_login(driver, fami_account, fami_password)
 
@@ -6619,7 +6619,7 @@ def urbtix_main(driver, url, config_dict):
         urbtix_account = config_dict["advanced"]["urbtix_account"]
         urbtix_password = config_dict["advanced"]["urbtix_password_plaintext"].strip()
         if urbtix_password == "":
-            urbtix_password = util.decryptMe(config_dict["advanced"]["urbtix_password"])
+            urbtix_password = util.decrypt_me(config_dict["advanced"]["urbtix_password"])
         if len(urbtix_account) > 4:
             urbtix_login(driver, urbtix_account, urbtix_password)
 
@@ -6799,7 +6799,7 @@ def cityline_main(driver, url, config_dict):
         cityline_account = config_dict["advanced"]["cityline_account"]
         cityline_password = config_dict["advanced"]["cityline_password_plaintext"].strip()
         if cityline_password == "":
-            cityline_password = util.decryptMe(config_dict["advanced"]["cityline_password"])
+            cityline_password = util.decrypt_me(config_dict["advanced"]["cityline_password"])
         if len(cityline_account) > 4:
             cityline_login(driver, cityline_account, cityline_password)
         return
@@ -8263,7 +8263,7 @@ def softix_powerweb_main(driver, url, config_dict):
         hkticketing_account = config_dict["advanced"]["hkticketing_account"].strip()
         hkticketing_password = config_dict["advanced"]["hkticketing_password_plaintext"].strip()
         if hkticketing_password == "":
-            hkticketing_password = util.decryptMe(config_dict["advanced"]["hkticketing_password"])
+            hkticketing_password = util.decrypt_me(config_dict["advanced"]["hkticketing_password"])
         if len(hkticketing_account) > 4:
             hkticketing_login(driver, hkticketing_account, hkticketing_password)
 
@@ -9228,7 +9228,7 @@ def kham_main(driver, url, config_dict, ocr, Captcha_Browser):
             udn_account = config_dict["advanced"]["udn_account"]
             udn_password = config_dict["advanced"]["udn_password_plaintext"].strip()
             if udn_password == "":
-                udn_password = util.decryptMe(config_dict["advanced"]["udn_password"])
+                udn_password = util.decrypt_me(config_dict["advanced"]["udn_password"])
             if len(udn_account) > 4:
                 udn_login(driver, udn_account, udn_password)
 
@@ -9397,7 +9397,7 @@ def kham_main(driver, url, config_dict, ocr, Captcha_Browser):
                 kham_account = config_dict["advanced"]["kham_account"]
                 kham_password = config_dict["advanced"]["kham_password_plaintext"].strip()
                 if kham_password == "":
-                    kham_password = util.decryptMe(config_dict["advanced"]["kham_password"])
+                    kham_password = util.decrypt_me(config_dict["advanced"]["kham_password"])
                 if len(kham_account) > 4:
                     kham_login(driver, kham_account, kham_password)
 
@@ -9405,7 +9405,7 @@ def kham_main(driver, url, config_dict, ocr, Captcha_Browser):
                 ticket_account = config_dict["advanced"]["ticket_account"]
                 ticket_password = config_dict["advanced"]["ticket_password_plaintext"].strip()
                 if ticket_password == "":
-                    ticket_password = util.decryptMe(config_dict["advanced"]["ticket_password"])
+                    ticket_password = util.decrypt_me(config_dict["advanced"]["ticket_password"])
                 if len(ticket_account) > 4:
                     ticket_login(driver, ticket_account, ticket_password)
 
@@ -10598,7 +10598,7 @@ def ticketplus_account_sign_in(driver, config_dict):
                     if not inputed_text is None:
                         ticketplus_password = config_dict["advanced"]["ticketplus_password_plaintext"].strip()
                         if ticketplus_password == "":
-                            ticketplus_password = util.decryptMe(config_dict["advanced"]["ticketplus_password"])
+                            ticketplus_password = util.decrypt_me(config_dict["advanced"]["ticketplus_password"])
 
                         if len(inputed_text) == 0:
                             el_pass.click()
@@ -10752,7 +10752,7 @@ def facebook_main(driver, config_dict):
     facebook_account = config_dict["advanced"]["facebook_account"].strip()
     facebook_password = config_dict["advanced"]["facebook_password_plaintext"].strip()
     if facebook_password == "":
-        facebook_password = util.decryptMe(config_dict["advanced"]["facebook_password"])
+        facebook_password = util.decrypt_me(config_dict["advanced"]["facebook_password"])
     if len(facebook_account) > 4:
         facebook_login(driver, facebook_account, facebook_password)
         time.sleep(2)
