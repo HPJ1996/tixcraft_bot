@@ -235,6 +235,18 @@
         },
         {
             "matches": [
+                "https://orders.ibon.com.tw/application/utk02/UTK0201_001.aspx?*",
+                "https://orders.ibon.com.tw/application/UTK02/UTK0201_001.aspx?*"
+            ],
+            "run_at": "document_start",
+            "world": "MAIN",
+            "js": [
+                "jquery.min.js",
+                "js/ibon_area_reload.js"
+            ]
+        },
+        {
+            "matches": [
                 "https://ticket.ibon.com.tw/EventBuy/*/*/*"
             ],
             "run_at": "document_end",
@@ -399,5 +411,5 @@
         }
 
     ],
-    "version": "1.0.31"
+    "version": "1.0.32"
 }

@@ -34,7 +34,7 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "MaxBot (2024.07.13)"
+CONST_APP_VERSION = "MaxBot (2024.07.14)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -1656,7 +1656,6 @@ async def nodriver_ibon_area_auto_select(tab, config_dict, area_keyword_item):
         print(exc)
         pass
 
-
     matched_blocks = []
     if len(data_list) > 0:
         area_list_count = len(data_list)
@@ -1800,8 +1799,6 @@ async def nodriver_ibon_performance(tab, config_dict):
 
     # click price row.
     area_keyword = config_dict["area_auto_select"]["area_keyword"].strip()
-
-    is_need_refresh = False
 
     if len(area_keyword) > 0:
         area_keyword_array = []
