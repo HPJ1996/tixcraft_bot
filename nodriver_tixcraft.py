@@ -34,7 +34,7 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "MaxBot (2024.07.14)"
+CONST_APP_VERSION = "MaxBot (2024.07.16)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -2190,6 +2190,12 @@ async def nodriver_ibon_main(tab, url, config_dict, ocr, Captcha_Browser):
                     if len(url.split('/'))==6:
                         is_event_page = True
 
+        if '/UTK02/UTK0204_' in url.upper():
+            if '.aspx?' in url.lower():
+                if 'PERFORMANCE_ID=' in url.upper():
+                    if len(url.split('/'))==6:
+                        is_event_page = True
+v
         if is_event_page:
             if config_dict["area_auto_select"]["enable"]:
                 if 'PRODUCT_ID=' in url.upper():

@@ -237,6 +237,8 @@
             "matches": [
                 "https://orders.ibon.com.tw/application/utk02/UTK0201_001.aspx?*",
                 "https://orders.ibon.com.tw/application/UTK02/UTK0201_001.aspx?*"
+                "https://orders.ibon.com.tw/application/utk02/UTK0202_.aspx?*",
+                "https://orders.ibon.com.tw/application/UTK02/UTK0202_.aspx?*"
             ],
             "run_at": "document_start",
             "world": "MAIN",
@@ -411,5 +413,5 @@
         }
 
     ],
-    "version": "1.0.32"
+    "version": "1.0.33"
 }
