@@ -2195,7 +2195,7 @@ async def nodriver_ibon_main(tab, url, config_dict, ocr, Captcha_Browser):
                 if 'PERFORMANCE_ID=' in url.upper():
                     if len(url.split('/'))==6:
                         is_event_page = True
-v
+
         if is_event_page:
             if config_dict["area_auto_select"]["enable"]:
                 if 'PRODUCT_ID=' in url.upper():
