@@ -434,6 +434,7 @@ def dump_settings_to_maxbot_plus_extension(ext, config_dict, CONST_MAXBOT_CONFIG
             with open(target_path) as json_data:
                 manifest_dict = json.load(json_data)
         except Exception as e:
+            print(e)
             pass
 
     local_remote_url_array = []

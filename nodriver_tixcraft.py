@@ -2628,10 +2628,6 @@ def get_extension_config(config_dict):
 
             conf.add_extension(clone_ext)
             util.dump_settings_to_maxbot_plus_extension(clone_ext, config_dict, CONST_MAXBOT_CONFIG_FILE)
-        #ext = get_maxbot_extension_path(CONST_MAXBLOCK_EXTENSION_NAME)
-        #if len(ext) > 0:
-        #    conf.add_extension(ext)
-        #    util.dump_settings_to_maxblock_plus_extension(ext, config_dict, CONST_MAXBOT_CONFIG_FILE, CONST_MAXBLOCK_EXTENSION_FILTER)
     return conf
 
 async def nodrver_block_urls(tab, config_dict):
