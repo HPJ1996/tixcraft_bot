@@ -43,7 +43,7 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "MaxBot (2024.07.17)"
+CONST_APP_VERSION = "MaxBot (2024.07.20)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -2849,7 +2849,7 @@ def kktix_double_check_all_text_value(driver, ticket_number):
 
     return is_do_press_next_button
 
-def set_kktix_control_label_text(driver, config_dict):
+def set_kktix_control_label_text(driver, config_dict, input_text_css):
     fail_list = []
     answer_list = util.get_answer_list_from_user_guess_string(config_dict, CONST_MAXBOT_ANSWER_ONLINE_FILE)
     inferred_answer_string = ""
@@ -2857,7 +2857,7 @@ def set_kktix_control_label_text(driver, config_dict):
         if not answer_item in fail_list:
             inferred_answer_string = answer_item
             break
-    input_text_css = 'div > div.code-input > div.control-group > div.controls > label[ng-if] > input[type="text"]'
+
     next_step_button_css = '#registrationsNewApp div.form-actions button.btn-primary'
     submit_by_enter = False
     check_input_interval = 0.2
@@ -2987,25 +2987,39 @@ def kktix_reg_new_main(driver, config_dict, fail_list, played_sound_ticket):
                     if show_debug_message:
                         print("control_text:", control_text)
 
+                    # format #1
+                    input_text_css = 'div > div.code-input > div.control-group > div.controls > label[ng-if] > input[type="text"]'
+                    
                     if len(control_text) > 0:
-                        input_text_css = 'div > div.code-input > div.control-group > div.controls > label[ng-if] > input[type="text"]'
                         input_text_element = None
                         try:
                             input_text_element = driver.find_element(By.CSS_SELECTOR, input_text_css)
                         except Exception as exc:
                             #print(exc)
                             pass
+                        # format #2
+                        if input_text_element is None:
+                            input_text_css = 'div > div.code-input > div.control-group > div.controls > label[ng-if] > div > div > span > input[type="text"]'
+                            try:
+                                input_text_element = driver.find_element(By.CSS_SELECTOR, input_text_css)
+                            except Exception as exc:
+                                #print(exc)
+                                pass
+
                         if input_text_element is None:
                             radio_css = 'div > div.code-input > div.control-group > div.controls > label[ng-if] > input[type="radio"]'
                             try:
-                                radio_element = driver.find_element(By.CSS_SELECTOR, radio_css)
-                                if radio_element:
-                                    print("found radio")
-                                    joined_button_css = 'div > div.code-input > div.control-group > div.controls > label[ng-if] > span[ng-if] > a[ng-href="#"]'
-                                    joined_element = driver.find_element(By.CSS_SELECTOR, joined_button_css)
-                                    if joined_element:
+                                radio_elements = driver.find_elements(By.CSS_SELECTOR, radio_css)
+                                if not radio_elements is None:
+                                    print("found radio legnth:", len(radio_elements))
+                                    if len(radio_elements)==1:
+                                        joined_button_css = 'div > div.code-input > div.control-group > div.controls > label[ng-if] > span[ng-if] > a[ng-href="#"]'
+                                        joined_element = driver.find_element(By.CSS_SELECTOR, joined_button_css)
+                                        if joined_element:
+                                            control_text = ""
+                                            print("member joined")
+                                    if len(radio_elements)>1:
                                         control_text = ""
-                                        print("member joined")
                             except Exception as exc:
                                 print(exc)
                                 pass
@@ -3027,7 +3041,7 @@ def kktix_reg_new_main(driver, config_dict, fail_list, played_sound_ticket):
                         # TODO: not implement in extension, so force to fill in webdriver.
                         is_fill_at_webdriver = True
                         if is_fill_at_webdriver:
-                            set_kktix_control_label_text(driver, config_dict)
+                            set_kktix_control_label_text(driver, config_dict, input_text_css)
                         pass
             else:
                 if is_need_refresh:
