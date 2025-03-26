@@ -40,6 +40,15 @@
             "order": true,
             "filename": "ding-dong.wav"
         },
+        "email": {
+            "ticket": true,
+            "order": true,
+            "apppassword": "",
+            "sender_email": "",
+            "receiver_email": "",
+            "subject": "\u865f\u5916",
+            "message": "\u9019\u662f\u4e00\u5c01\u5beb\u7d66\u81ea\u5df1\u7684\u4fe1\u3002"
+        },
         "tixcraft_sid": "",
         "ibonqware": "",
         "facebook_account": "",

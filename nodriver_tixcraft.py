@@ -34,7 +34,7 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "MaxBot (2024.07.20)"
+CONST_APP_VERSION = "MaxBot (2024.08.01)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -746,7 +746,7 @@ async def nodriver_kktix_press_next_button(tab):
     return ret
 
 
-async def nodriver_kktix_reg_new_main(tab, config_dict, fail_list, played_sound_ticket):
+async def nodriver_kktix_reg_new_main(tab, config_dict, fail_list, played_sound_ticket, last_sent_minute):
     show_debug_message = True       # debug.
     show_debug_message = False      # online
 
@@ -813,6 +813,8 @@ async def nodriver_kktix_reg_new_main(tab, config_dict, fail_list, played_sound_
                     if not played_sound_ticket:
                         play_sound_while_ordering(config_dict)
                     played_sound_ticket = True
+
+                last_sent_minute = util.optimized_email_sending(config_dict, "ticket", last_sent_minute, url)
 
                 is_finish_checkbox_click = await nodriver_check_checkbox(tab, 'input[type="checkbox"]:not(:checked)')
 
@@ -883,7 +885,7 @@ async def nodriver_kktix_reg_new_main(tab, config_dict, fail_list, played_sound_
                     if config_dict["advanced"]["auto_reload_page_interval"] > 0:
                         time.sleep(config_dict["advanced"]["auto_reload_page_interval"])
 
-    return fail_list, played_sound_ticket
+    return fail_list, played_sound_ticket, last_sent_minute
 
 async def nodriver_kktix_main(tab, url, config_dict):
     global kktix_dict
@@ -896,6 +898,7 @@ async def nodriver_kktix_main(tab, url, config_dict):
         kktix_dict["is_popup_checkout"] = False
         kktix_dict["played_sound_ticket"] = False
         kktix_dict["played_sound_order"] = False
+        kktix_dict["last_sent_minute"] = None
 
     is_url_contain_sign_in = False
     # fix https://kktix.com/users/sign_in?back_to=https://kktix.com/events/xxxx and registerStatus: SOLD_OUT cause page refresh.
@@ -930,7 +933,7 @@ async def nodriver_kktix_main(tab, url, config_dict):
 
                 # check is able to buy.
                 if config_dict["kktix"]["auto_fill_ticket_number"]:
-                    kktix_dict["fail_list"], kktix_dict["played_sound_ticket"] = await nodriver_kktix_reg_new_main(tab, config_dict, kktix_dict["fail_list"], kktix_dict["played_sound_ticket"])
+                    kktix_dict["fail_list"], kktix_dict["played_sound_ticket"], kktix_dict["last_sent_minute"] = await nodriver_kktix_reg_new_main(tab, config_dict, kktix_dict["fail_list"], kktix_dict["played_sound_ticket"], kktix_dict["last_sent_minute"])
                     kktix_dict["done_time"] = time.time()
         else:
             is_event_page = False
@@ -978,6 +981,7 @@ async def nodriver_kktix_main(tab, url, config_dict):
         if config_dict["advanced"]["play_sound"]["order"]:
             if not kktix_dict["played_sound_order"]:
                 play_sound_while_ordering(config_dict)
+        util.optimized_email_sending(config_dict, "order", None, url)
 
         kktix_dict["played_sound_order"] = True
 
@@ -1249,6 +1253,8 @@ async def nodriver_tixcraft_main(tab, url, config_dict, ocr, Captcha_Browser):
             if not tixcraft_dict["played_sound_ticket"]:
                 play_sound_while_ordering(config_dict)
             tixcraft_dict["played_sound_ticket"] = True
+
+        tixcraft_dict["last_sent_minute"] = util.optimized_email_sending(config_dict, "ticket", tixcraft_dict["last_sent_minute"], url)
     else:
         tixcraft_dict["played_sound_ticket"] = False
 
@@ -1277,6 +1283,7 @@ async def nodriver_tixcraft_main(tab, url, config_dict, ocr, Captcha_Browser):
             if not tixcraft_dict["played_sound_order"]:
                 play_sound_while_ordering(config_dict)
             tixcraft_dict["played_sound_order"] = True
+        util.optimized_email_sending(config_dict, "order", None, url)
     else:
         tixcraft_dict["is_popup_checkout"] = False
         tixcraft_dict["played_sound_order"] = False
@@ -2104,6 +2111,7 @@ async def nodriver_ibon_main(tab, url, config_dict, ocr, Captcha_Browser):
         ibon_dict["start_time"]=None
         ibon_dict["done_time"]=None
         ibon_dict["elapsed_time"]=None
+        ibon_dict["last_sent_minute"]=None
 
     home_url_list = ['https://ticket.ibon.com.tw/'
     ,'https://ticket.ibon.com.tw/index/entertainment'
@@ -2288,6 +2296,13 @@ if ($main_table.length > 0){{
 
                     if not is_name_based:
                         is_button_clicked = await nodriver_press_button(tab, 'a.btn.btn-pink.continue')
+                        
+                    if config_dict["advanced"]["play_sound"]["ticket"]:
+                        if not played_sound_ticket:
+                            play_sound_while_ordering(config_dict)
+                        played_sound_ticket = True
+
+                    ibon_dict["last_sent_minute"] = util.optimized_email_sending(config_dict, "ticket", ibon_dict["last_sent_minute"], url)
 
 
 async def nodriver_cityline_auto_retry_access(tab, url, config_dict):

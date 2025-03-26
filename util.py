@@ -12,6 +12,9 @@ import sys
 import threading
 import uuid
 from typing import Optional
+import smtplib
+from email.mime.text import MIMEText
+from datetime import datetime
 
 import requests
 
@@ -1323,26 +1326,19 @@ def guess_tixcraft_question(driver, question_text):
     inferred_answer_string = None
 
     # 請輸入"YES"，代表您已詳閱且瞭解並同意。
-    if inferred_answer_string is None:
-        if '輸入"YES"' in formated_html_text:
-            if '已詳閱' in formated_html_text or '請詳閱' in formated_html_text:
-                if '同意' in formated_html_text:
-                    inferred_answer_string = 'YES'
-
     # 輸入yes表示我同意以上文字
-    if inferred_answer_string is None:
-        if '輸入yes' in formated_html_text:
-            if '表示' in formated_html_text or '代表' in formated_html_text:
-                if '同意' in formated_html_text:
-                    if '我' in formated_html_text or '您' in formated_html_text or '你' in formated_html_text:
-                        inferred_answer_string = 'yes'
-
     # 購票前請詳閱注意事項，並於驗證碼欄位輸入【同意】繼續購票流程。
-    if inferred_answer_string is None:
-        if '驗證碼' in formated_html_text or '驗證欄位' in formated_html_text:
-            if '已詳閱' in formated_html_text or '請詳閱' in formated_html_text:
-                if '輸入【同意】' in formated_html_text:
-                    inferred_answer_string = '同意'
+    # 若您確定已有演唱會門票並同意相關規定，請於下方空格填入：YES，並繼續完成購買。
+    if '輸入"YES"' in formated_html_text and ('已詳閱' in formated_html_text or '請詳閱' in formated_html_text) and '同意' in formated_html_text:
+        inferred_answer_string = 'YES'
+    elif '輸入yes' in formated_html_text and ('表示' in formated_html_text or '代表' in formated_html_text) and '同意' in formated_html_text and ('我' in formated_html_text or '您' in formated_html_text or '你' in formated_html_text):
+        inferred_answer_string = 'yes'
+    elif ('驗證碼' in formated_html_text or '驗證欄位' in formated_html_text) and ('已詳閱' in formated_html_text or '請詳閱' in formated_html_text) and '輸入【同意】' in formated_html_text:
+        inferred_answer_string = '同意'
+    elif ('輸入' in formated_html_text or '填入' in formated_html_text) and 'YES' in formated_html_text and '同意' in formated_html_text:
+        inferred_answer_string = '同意'
+    elif re.search(r'enter\s+yes\s+in\s+the\s+space\s+below|agree', formated_html_text, re.IGNORECASE):
+        inferred_answer_string = '同意'
 
     if inferred_answer_string is None:
         if len(question_text) > 0:
@@ -2016,3 +2012,73 @@ def copytree(src, dst, symlinks=False, ignore=None):
             shutil.copytree(s, d, symlinks, ignore)
         else:
             shutil.copy2(s, d)
+
+def send_email(sender_email, sender_password, receiver_email, subject, message):
+    """
+    透過 Google 帳號寄送電子郵件。
+
+    Args:
+        sender_email (str): 寄件者的 Google 電子郵件地址。
+        sender_password (str): 寄件者的 Google 應用程式密碼。
+        receiver_email (str): 收件者的電子郵件地址。
+        subject (str): 電子郵件主旨。
+        message (str): 電子郵件內容。
+    """
+    try:
+        msg = MIMEText(message, 'plain', 'utf-8')
+        msg['Subject'] = subject
+        msg['From'] = sender_email
+        msg['To'] = receiver_email
+
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+            server.login(sender_email, sender_password)
+            server.send_message(msg)
+
+        print("電子郵件已成功寄送！")
+
+    except Exception as e:
+        print(f"寄送電子郵件時發生錯誤：{e}")
+
+def optimized_email_sending(config_dict, mode="ticket", last_sent_minute=None, url=None):
+    """
+    如果配置允許，每分鐘發送一封電子郵件。
+
+    Args:
+        config_dict (dict): 配置字典。
+        mode (str): 電子郵件模式，可以是 "ticket" 或其他。
+        last_sent_minute (int): 上次發送電子郵件的分鐘數。
+        url (str): 要添加到電子郵件消息中的 URL。
+
+    Returns:
+        int: 當前分鐘數，如果發送了電子郵件，則更新。
+    """
+    email_config = config_dict.get("advanced", {}).get("email", {})
+    if email_config.get(mode):
+        sender_email = email_config.get("sender_email")
+        app_password = email_config.get("apppassword")
+        receiver_email = email_config.get("receiver_email")
+        subject = email_config.get("subject")
+        message = email_config.get("message", "")
+
+        # 檢查電子郵件配置是否完整
+        if not sender_email or not app_password or not receiver_email:
+            print("Error: sender_email, apppassword, or receiver_email is missing in config.")
+            return last_sent_minute  # 終止執行
+
+        if mode == "ticket":
+            subject += " - 有票"
+        else:
+            subject += " - 訂購"
+
+        if url:
+            message += f"\n{url}"
+
+        current_minute = datetime.now().minute
+        if current_minute != last_sent_minute:
+            try:
+                send_email(sender_email, app_password, receiver_email, subject, message)
+                last_sent_minute = current_minute
+            except Exception as e:
+                print(f"Error sending email: {e}")
+            return last_sent_minute
+    return last_sent_minute

@@ -280,6 +280,10 @@
                             <option value="nodriver">NODRIVER</option>
                             <!-- option value="DrissionPage">DrissionPage</option -->
                         </select>
+                        <div class="bd-callout bd-callout-info">
+                            <strong>提示：</strong>
+                            部份網站只支援使用 nodriver, 但 nodriver 是新的模式, 很多功能還沒被實作。
+                        </div>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -298,6 +302,52 @@
                     <label for="play_sound_filename" class="col-sm-2 col-form-label">音效檔</label>
                     <div class="col-sm-10">
                         <input class="form-control" id="play_sound_filename" value="" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label form-check-label" for="email_ticket">有票時寄信</label>
+                    <div class="col-sm-10">
+                        <input class="form-check-input" type="checkbox" id="email_ticket" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label form-check-label" for="email_order">訂購時寄信</label>
+                    <div class="col-sm-10">
+                        <input class="form-check-input" type="checkbox" id="email_order" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label for="apppassword" class="col-sm-2 col-form-label">您的 Google 應用程式密碼</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" id="apppassword" value="" />
+                        <div class="bd-callout bd-callout-info">
+                            <strong>提示：</strong>
+                            <a href='https://stackoverflow.max-everyday.com/2025/03/google-app-password/' target="_blank">Google 應用程式密碼(App Password)取得教學</a> (另開新視窗)。請務必妥善保管您的應用程式密碼，不要將其洩露給他人。
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label for="sender_email" class="col-sm-2 col-form-label">您的 Google 電子郵件地址</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" id="sender_email" value="" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label for="receiver_email" class="col-sm-2 col-form-label">收件者的電子郵件地址</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" id="receiver_email" value="" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label for="email_subject" class="col-sm-2 col-form-label">電子郵件主旨</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" id="email_subject" value="" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label for="email_message" class="col-sm-2 col-form-label">電子郵件內容</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" id="email_message" value="" />
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -428,6 +478,10 @@
                     <label class="col-sm-2 col-form-label form-check-label" for="auto_guess_options">自動猜測驗證問題</label>
                     <div class="col-sm-10">
                         <input class="form-check-input" type="checkbox" id="auto_guess_options" />
+                        <div class="bd-callout bd-callout-info">
+                            <strong>提示：</strong>
+                            勾選會自動猜答案, 但是猜測的可能會是錯誤選項, 反而會造成搶不到票。
+                        </div>
                     </div>
                 </div>
             </div>

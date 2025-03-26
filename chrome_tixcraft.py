@@ -3,7 +3,6 @@
 #執行方式：python chrome_tixcraft.py 或 python3 chrome_tixcraft.py
 #import jieba
 #from DrissionPage import ChromiumPage
-#import nodriver as uc
 import argparse
 import base64
 import json
@@ -43,7 +42,7 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "MaxBot (2024.07.20)"
+CONST_APP_VERSION = "MaxBot (2024.08.01)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -1920,6 +1919,8 @@ def tixcraft_input_check_code(driver, config_dict, fail_list, question_selector)
     answer_list = []
 
     question_text = get_text_by_selector(driver, question_selector, 'innerText')
+    if show_debug_message:
+        print("question_text:", question_text)
     if len(question_text) > 0:
         write_question_to_file(question_text)
 
@@ -2911,7 +2912,7 @@ def kktix_reg_captcha(driver, config_dict, fail_list, registrationsNewApp_div):
 
     return fail_list, is_question_popup
 
-def kktix_reg_new_main(driver, config_dict, fail_list, played_sound_ticket):
+def kktix_reg_new_main(driver, config_dict, fail_list, played_sound_ticket, last_sent_minute):
     show_debug_message = True       # debug.
     show_debug_message = False      # online
 
@@ -2976,6 +2977,8 @@ def kktix_reg_new_main(driver, config_dict, fail_list, played_sound_ticket):
                     if not played_sound_ticket:
                         play_sound_while_ordering(config_dict)
                     played_sound_ticket = True
+
+                last_sent_minute = util.optimized_email_sending(config_dict, "ticket", last_sent_minute, url)
 
                 # whole event question.
                 fail_list, is_question_popup = kktix_reg_captcha(driver, config_dict, fail_list, registrationsNewApp_div)
@@ -3058,7 +3061,7 @@ def kktix_reg_new_main(driver, config_dict, fail_list, played_sound_ticket):
                     if config_dict["advanced"]["auto_reload_page_interval"] > 0:
                         time.sleep(config_dict["advanced"]["auto_reload_page_interval"])
 
-    return fail_list, played_sound_ticket
+    return fail_list, played_sound_ticket, last_sent_minute
 
 
 def kktix_check_register_status(driver, url):
@@ -5979,6 +5982,7 @@ def tixcraft_main(driver, url, config_dict, ocr, Captcha_Browser):
         tixcraft_dict["area_retry_count"]=0
         tixcraft_dict["played_sound_ticket"] = False
         tixcraft_dict["played_sound_order"] = False
+        tixcraft_dict["last_sent_minute"] = None
 
     tixcraft_home_close_window(driver)
 
@@ -6063,6 +6067,8 @@ def tixcraft_main(driver, url, config_dict, ocr, Captcha_Browser):
             if not tixcraft_dict["played_sound_ticket"]:
                 play_sound_while_ordering(config_dict)
             tixcraft_dict["played_sound_ticket"] = True
+
+        tixcraft_dict["last_sent_minute"] = util.optimized_email_sending(config_dict, "ticket", tixcraft_dict["last_sent_minute"], url)
     else:
         tixcraft_dict["played_sound_ticket"] = False
 
@@ -6091,6 +6097,7 @@ def tixcraft_main(driver, url, config_dict, ocr, Captcha_Browser):
             if not tixcraft_dict["played_sound_order"]:
                 play_sound_while_ordering(config_dict)
             tixcraft_dict["played_sound_order"] = True
+        util.optimized_email_sending(config_dict, "order", None, url)
     else:
         tixcraft_dict["is_popup_checkout"] = False
         tixcraft_dict["played_sound_order"] = False
@@ -6141,6 +6148,8 @@ def kktix_main(driver, url, config_dict):
         kktix_dict["is_popup_checkout"] = False
         kktix_dict["played_sound_ticket"] = False
         kktix_dict["played_sound_order"] = False
+        kktix_dict["last_sent_minute"] = None
+
 
     is_url_contain_sign_in = False
     # fix https://kktix.com/users/sign_in?back_to=https://kktix.com/events/xxxx and registerStatus: SOLD_OUT cause page refresh.
@@ -6171,7 +6180,7 @@ def kktix_main(driver, url, config_dict):
             else:
                 # check is able to buy.
                 if config_dict["kktix"]["auto_fill_ticket_number"]:
-                    kktix_dict["fail_list"], kktix_dict["played_sound_ticket"] = kktix_reg_new_main(driver, config_dict, kktix_dict["fail_list"], kktix_dict["played_sound_ticket"])
+                    kktix_dict["fail_list"], kktix_dict["played_sound_ticket"], kktix_dict["last_sent_minute"] = kktix_reg_new_main(driver, config_dict, kktix_dict["fail_list"], kktix_dict["played_sound_ticket"], kktix_dict["last_sent_minute"])
                     kktix_dict["done_time"] = time.time()
         else:
             is_event_page = False
@@ -6218,6 +6227,7 @@ def kktix_main(driver, url, config_dict):
         if config_dict["advanced"]["play_sound"]["order"]:
             if not kktix_dict["played_sound_order"]:
                 play_sound_while_ordering(config_dict)
+        util.optimized_email_sending(config_dict, "order", None, url)
 
         kktix_dict["played_sound_order"] = True
 
@@ -10913,24 +10923,37 @@ def sendkey_to_browser(driver, config_dict, url):
         tmp_filepath = os.path.join(app_root, tmp_file)
 
     if os.path.exists(tmp_filepath):
-        sendkey_to_browser_exist(driver, tmp_filepath, url)
+        sendkey_dict = None
+        try:
+            with open(tmp_filepath) as json_data:
+                sendkey_dict = json.load(json_data)
+                print(sendkey_dict)
+        except Exception as e:
+            print("error on open file")
+            print(e)
+            pass
 
-def sendkey_to_browser_exist(driver, tmp_filepath, url):
-    sendkey_dict = None
-    try:
-        with open(tmp_filepath) as json_data:
-            sendkey_dict = json.load(json_data)
-            print(sendkey_dict)
-    except Exception as e:
-        print("error on open file")
-        print(e)
-        pass
+        if sendkey_dict:
+            all_command_done = sendkey_to_browser_exist(driver, sendkey_dict, url)
+            # must all command success to delete tmp file.
+            if all_command_done:
+                try:
+                    os.unlink(tmp_filepath)
+                    #print("remove file:", tmp_filepath)
+                except Exception as e:
+                    pass
 
-    if sendkey_dict:
-        all_command_done = True
-        if "command" in sendkey_dict:
-            for cmd_dict in sendkey_dict["command"]:
-                #print("cmd_dict", cmd_dict)
+def sendkey_to_browser_exist(driver, sendkey_dict, url):
+    all_command_done = True
+    if "command" in sendkey_dict:
+        for cmd_dict in sendkey_dict["command"]:
+            #print("cmd_dict", cmd_dict)
+            matched_location = True
+            if "location" in cmd_dict:
+                if cmd_dict["location"] != url:
+                    matched_location = False
+
+            if matched_location:
                 if cmd_dict["type"] == "sendkey":
                     print("sendkey")
                     target_text = cmd_dict["text"]
@@ -10957,14 +10980,8 @@ def sendkey_to_browser_exist(driver, tmp_filepath, url):
                         print("error on click")
                         print(exc)
                         pass
-                time.sleep(0.05)
-
-        # must all command success to delete tmp file.
-        if all_command_done:
-            try:
-                os.unlink(tmp_filepath)
-            except Exception as e:
-                pass
+            time.sleep(0.05)
+    return all_command_done
 
 def main(args):
     config_dict = get_config_dict(args)

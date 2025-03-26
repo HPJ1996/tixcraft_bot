@@ -24,7 +24,7 @@ try:
 except Exception as exc:
     pass
 
-CONST_APP_VERSION = "MaxBot (2024.07.20)"
+CONST_APP_VERSION = "MaxBot (2024.08.01)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -127,6 +127,15 @@ def get_default_config():
     config_dict["advanced"]["play_sound"]["ticket"] = True
     config_dict["advanced"]["play_sound"]["order"] = True
     config_dict["advanced"]["play_sound"]["filename"] = CONST_CAPTCHA_SOUND_FILENAME_DEFAULT
+
+    config_dict['advanced']['email']={}
+    config_dict["advanced"]["email"]["ticket"] = True
+    config_dict["advanced"]["email"]["order"] = True
+    config_dict["advanced"]["email"]["apppassword"] = ""
+    config_dict["advanced"]["email"]["sender_email"] = ""
+    config_dict["advanced"]["email"]["receiver_email"] = ""
+    config_dict["advanced"]["email"]["subject"] = "號外"
+    config_dict["advanced"]["email"]["message"] = "這是一封寫給自己的信。"
 
     config_dict["advanced"]["tixcraft_sid"] = ""
     config_dict["advanced"]["ibonqware"] = ""

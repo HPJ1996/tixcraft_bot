@@ -23,6 +23,14 @@ const play_ticket_sound = document.querySelector('#play_ticket_sound');
 const play_order_sound = document.querySelector('#play_order_sound');
 const play_sound_filename = document.querySelector('#play_sound_filename');
 
+const email_ticket = document.querySelector('#email_ticket');
+const email_order = document.querySelector('#email_order');
+const apppassword = document.querySelector('#apppassword');
+const sender_email = document.querySelector('#sender_email');
+const receiver_email = document.querySelector('#receiver_email');
+const email_subject = document.querySelector('#email_subject');
+const email_message = document.querySelector('#email_message');
+
 const auto_press_next_step_button = document.querySelector('#auto_press_next_step_button');
 const max_dwell_time = document.querySelector('#max_dwell_time');
 
@@ -117,6 +125,14 @@ function load_settins_to_form(settings) {
         play_ticket_sound.checked = settings.advanced.play_sound.ticket;
         play_order_sound.checked = settings.advanced.play_sound.order;
         play_sound_filename.value = settings.advanced.play_sound.filename;
+
+        email_ticket.checked = settings.advanced.email.ticket;
+        email_order.checked = settings.advanced.email.order;
+        apppassword.value = settings.advanced.email.apppassword;
+        sender_email.value = settings.advanced.email.sender_email;
+        receiver_email.value = settings.advanced.email.receiver_email;
+        email_subject.value = settings.advanced.email.subject;
+        email_message.value = settings.advanced.email.message;
 
         auto_press_next_step_button.checked = settings.kktix.auto_press_next_step_button;
         max_dwell_time.value = settings.kktix.max_dwell_time;
@@ -352,6 +368,14 @@ function save_changes_to_dict(silent_flag) {
             settings.advanced.play_sound.ticket = play_ticket_sound.checked;
             settings.advanced.play_sound.order = play_order_sound.checked;
             settings.advanced.play_sound.filename = play_sound_filename.value;
+
+            settings.advanced.email.ticket = email_ticket.checked;
+            settings.advanced.email.order = email_order.checked;
+            settings.advanced.email.apppassword = apppassword.value;
+            settings.advanced.email.sender_email = sender_email.value;
+            settings.advanced.email.receiver_email = receiver_email.value;
+            settings.advanced.email.subject = email_subject.value;
+            settings.advanced.email.message = email_message.value;
 
             settings.kktix.auto_press_next_step_button = auto_press_next_step_button.checked;
             settings.kktix.max_dwell_time = parseInt(max_dwell_time.value);
