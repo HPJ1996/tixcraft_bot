@@ -34,7 +34,7 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "MaxBot (2024.08.01)"
+CONST_APP_VERSION = "MaxBot (2024.08.02)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -746,7 +746,7 @@ async def nodriver_kktix_press_next_button(tab):
     return ret
 
 
-async def nodriver_kktix_reg_new_main(tab, config_dict, fail_list, played_sound_ticket, last_sent_minute):
+async def nodriver_kktix_reg_new_main(tab, url, config_dict, fail_list, played_sound_ticket, last_sent_minute):
     show_debug_message = True       # debug.
     show_debug_message = False      # online
 
@@ -933,7 +933,7 @@ async def nodriver_kktix_main(tab, url, config_dict):
 
                 # check is able to buy.
                 if config_dict["kktix"]["auto_fill_ticket_number"]:
-                    kktix_dict["fail_list"], kktix_dict["played_sound_ticket"], kktix_dict["last_sent_minute"] = await nodriver_kktix_reg_new_main(tab, config_dict, kktix_dict["fail_list"], kktix_dict["played_sound_ticket"], kktix_dict["last_sent_minute"])
+                    kktix_dict["fail_list"], kktix_dict["played_sound_ticket"], kktix_dict["last_sent_minute"] = await nodriver_kktix_reg_new_main(tab, url, config_dict, kktix_dict["fail_list"], kktix_dict["played_sound_ticket"], kktix_dict["last_sent_minute"])
                     kktix_dict["done_time"] = time.time()
         else:
             is_event_page = False

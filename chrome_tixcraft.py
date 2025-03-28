@@ -42,7 +42,7 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "MaxBot (2024.08.01)"
+CONST_APP_VERSION = "MaxBot (2024.08.02)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -2912,7 +2912,7 @@ def kktix_reg_captcha(driver, config_dict, fail_list, registrationsNewApp_div):
 
     return fail_list, is_question_popup
 
-def kktix_reg_new_main(driver, config_dict, fail_list, played_sound_ticket, last_sent_minute):
+def kktix_reg_new_main(driver, url, config_dict, fail_list, played_sound_ticket, last_sent_minute):
     show_debug_message = True       # debug.
     show_debug_message = False      # online
 
@@ -6180,7 +6180,7 @@ def kktix_main(driver, url, config_dict):
             else:
                 # check is able to buy.
                 if config_dict["kktix"]["auto_fill_ticket_number"]:
-                    kktix_dict["fail_list"], kktix_dict["played_sound_ticket"], kktix_dict["last_sent_minute"] = kktix_reg_new_main(driver, config_dict, kktix_dict["fail_list"], kktix_dict["played_sound_ticket"], kktix_dict["last_sent_minute"])
+                    kktix_dict["fail_list"], kktix_dict["played_sound_ticket"], kktix_dict["last_sent_minute"] = kktix_reg_new_main(driver, url, config_dict, kktix_dict["fail_list"], kktix_dict["played_sound_ticket"], kktix_dict["last_sent_minute"])
                     kktix_dict["done_time"] = time.time()
         else:
             is_event_page = False
