@@ -34,7 +34,7 @@ try:
 except Exception as exc:
     pass
 
-CONST_APP_VERSION = "MaxBot (2024.08.02)"
+CONST_APP_VERSION = "MaxBot (2024.08.03)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -50,11 +50,7 @@ CONST_FROM_TOP_TO_BOTTOM = "from top to bottom"
 CONST_FROM_BOTTOM_TO_TOP = "from bottom to top"
 CONST_CENTER = "center"
 CONST_RANDOM = "random"
-CONST_SELECT_ORDER_DEFAULT = CONST_RANDOM
 CONST_SELECT_OPTIONS_DEFAULT = (CONST_FROM_TOP_TO_BOTTOM, CONST_FROM_BOTTOM_TO_TOP, CONST_CENTER, CONST_RANDOM)
-CONST_EXCLUDE_DEFAULT = "\"輪椅\",\"身障\",\"身心 障礙\",\"Restricted View\",\"燈柱遮蔽\",\"視線不完整\""
-CONST_CAPTCHA_SOUND_FILENAME_DEFAULT = "ding-dong.wav"
-CONST_HOMEPAGE_DEFAULT = "https://tixcraft.com"
 
 CONST_OCR_CAPTCH_IMAGE_SOURCE_NON_BROWSER = "NonBrowser"
 CONST_OCR_CAPTCH_IMAGE_SOURCE_CANVAS = "canvas"
@@ -589,119 +585,117 @@ def load_translate():
     return translate
 
 def get_default_config():
-    config_dict={}
+    CONST_HOMEPAGE_DEFAULT = "about:blank"
+    CONST_SELECT_ORDER_DEFAULT = CONST_RANDOM
+    CONST_EXCLUDE_DEFAULT = "\"輪椅\",\"身障\",\"身心 障礙\",\"Restricted View\",\"Wheelchair\",\"燈柱遮蔽\",\"視線不完整\""
+    CONST_CAPTCHA_SOUND_FILENAME_DEFAULT = "ding-dong.wav"
 
-    config_dict["homepage"] = CONST_HOMEPAGE_DEFAULT
-    config_dict["browser"] = "chrome"
-    config_dict["language"] = "English"
-    config_dict["ticket_number"] = 2
-    config_dict["refresh_datetime"] = ""
-
-    config_dict["ocr_captcha"] = {}
-    config_dict["ocr_captcha"]["enable"] = True
-    config_dict["ocr_captcha"]["beta"] = True
-    config_dict["ocr_captcha"]["force_submit"] = True
-    config_dict["ocr_captcha"]["image_source"] = CONST_OCR_CAPTCH_IMAGE_SOURCE_CANVAS
-    config_dict["webdriver_type"] = CONST_WEBDRIVER_TYPE_UC
-
-    config_dict["date_auto_select"] = {}
-    config_dict["date_auto_select"]["enable"] = True
-    config_dict["date_auto_select"]["date_keyword"] = ""
-    config_dict["date_auto_select"]["mode"] = CONST_SELECT_ORDER_DEFAULT
-
-    config_dict["area_auto_select"] = {}
-    config_dict["area_auto_select"]["enable"] = True
-    config_dict["area_auto_select"]["mode"] = CONST_SELECT_ORDER_DEFAULT
-    config_dict["area_auto_select"]["area_keyword"] = ""
-    config_dict["keyword_exclude"] = CONST_EXCLUDE_DEFAULT
-
-    config_dict['kktix']={}
-    config_dict["kktix"]["auto_press_next_step_button"] = True
-    config_dict["kktix"]["auto_fill_ticket_number"] = True
-    config_dict["kktix"]["max_dwell_time"] = 90
-
-    config_dict['cityline']={}
-    config_dict["cityline"]["cityline_queue_retry"] = True
-
-    config_dict['tixcraft']={}
-    config_dict["tixcraft"]["pass_date_is_sold_out"] = True
-    config_dict["tixcraft"]["auto_reload_coming_soon_page"] = True
-
-    config_dict['advanced']={}
-
-    config_dict['advanced']['play_sound']={}
-    config_dict["advanced"]["play_sound"]["ticket"] = True
-    config_dict["advanced"]["play_sound"]["order"] = True
-    config_dict["advanced"]["play_sound"]["filename"] = CONST_CAPTCHA_SOUND_FILENAME_DEFAULT
-
-    config_dict['advanced']['email']={}
-    config_dict["advanced"]["email"]["ticket"] = True
-    config_dict["advanced"]["email"]["order"] = True
-    config_dict["advanced"]["email"]["apppassword"] = ""
-    config_dict["advanced"]["email"]["sender_email"] = ""
-    config_dict["advanced"]["email"]["receiver_email"] = ""
-    config_dict["advanced"]["email"]["subject"] = "號外"
-    config_dict["advanced"]["email"]["message"] = "這是一封寫給自己的信。"
-
-    config_dict["advanced"]["tixcraft_sid"] = ""
-    config_dict["advanced"]["ibonqware"] = ""
-    config_dict["advanced"]["facebook_account"] = ""
-    config_dict["advanced"]["kktix_account"] = ""
-    config_dict["advanced"]["fami_account"] = ""
-    config_dict["advanced"]["cityline_account"] = ""
-    config_dict["advanced"]["urbtix_account"] = ""
-    config_dict["advanced"]["hkticketing_account"] = ""
-    config_dict["advanced"]["kham_account"] = ""
-    config_dict["advanced"]["ticket_account"] = ""
-    config_dict["advanced"]["udn_account"] = ""
-    config_dict["advanced"]["ticketplus_account"] = ""
-
-    config_dict["advanced"]["facebook_password"] = ""
-    config_dict["advanced"]["kktix_password"] = ""
-    config_dict["advanced"]["fami_password"] = ""
-    config_dict["advanced"]["urbtix_password"] = ""
-    config_dict["advanced"]["cityline_password"] = ""
-    config_dict["advanced"]["hkticketing_password"] = ""
-    config_dict["advanced"]["kham_password"] = ""
-    config_dict["advanced"]["ticket_password"] = ""
-    config_dict["advanced"]["udn_password"] = ""
-    config_dict["advanced"]["ticketplus_password"] = ""
-
-    config_dict["advanced"]["facebook_password_plaintext"] = ""
-    config_dict["advanced"]["kktix_password_plaintext"] = ""
-    config_dict["advanced"]["fami_password_plaintext"] = ""
-    config_dict["advanced"]["urbtix_password_plaintext"] = ""
-    config_dict["advanced"]["cityline_password_plaintext"] = ""
-    config_dict["advanced"]["hkticketing_password_plaintext"] = ""
-    config_dict["advanced"]["kham_password_plaintext"] = ""
-    config_dict["advanced"]["ticket_password_plaintext"] = ""
-    config_dict["advanced"]["udn_password_plaintext"] = ""
-    config_dict["advanced"]["ticketplus_password_plaintext"] = ""
-
-    config_dict["advanced"]["chrome_extension"] = True
-    config_dict["advanced"]["disable_adjacent_seat"] = False
-    config_dict["advanced"]["adblock"] = True
-    config_dict["advanced"]["hide_some_image"] = False
-    config_dict["advanced"]["block_facebook_network"] = False
-
-    config_dict["advanced"]["headless"] = False
-    config_dict["advanced"]["verbose"] = False
-    config_dict["advanced"]["auto_guess_options"] = False
-    config_dict["advanced"]["user_guess_string"] = ""
-    config_dict["advanced"]["remote_url"] = "http://127.0.0.1:%d/" % (CONST_SERVER_PORT)
-
-    config_dict["advanced"]["auto_reload_page_interval"] = 0.1
-    config_dict["advanced"]["auto_reload_overheat_count"] = 4
-    config_dict["advanced"]["auto_reload_overheat_cd"] = 1.0
-    config_dict["advanced"]["reset_browser_interval"] = 0
-    config_dict["advanced"]["proxy_server_port"] = ""
-    config_dict["advanced"]["window_size"] = "480,1024"
-
-    config_dict["advanced"]["idle_keyword"] = ""
-    config_dict["advanced"]["resume_keyword"] = ""
-    config_dict["advanced"]["idle_keyword_second"] = ""
-    config_dict["advanced"]["resume_keyword_second"] = ""
-
+    config_dict = {
+        "homepage": CONST_HOMEPAGE_DEFAULT,
+        "browser": "chrome",
+        "language": "English",
+        "ticket_number": 2,
+        "refresh_datetime": "",
+        "port": CONST_SERVER_PORT,
+        "ocr_captcha": {
+            "enable": True,
+            "beta": True,
+            "force_submit": True,
+            "image_source": CONST_OCR_CAPTCH_IMAGE_SOURCE_CANVAS,
+        },
+        "webdriver_type": CONST_WEBDRIVER_TYPE_UC,
+        "date_auto_select": {
+            "enable": True,
+            "date_keyword": "",
+            "mode": CONST_SELECT_ORDER_DEFAULT,
+        },
+        "area_auto_select": {
+            "enable": True,
+            "mode": CONST_SELECT_ORDER_DEFAULT,
+            "area_keyword": "",
+        },
+        "keyword_exclude": CONST_EXCLUDE_DEFAULT,
+        "kktix": {
+            "auto_press_next_step_button": True,
+            "auto_fill_ticket_number": True,
+            "max_dwell_time": 90,
+        },
+        "cityline": {
+            "cityline_queue_retry": True,
+        },
+        "tixcraft": {
+            "pass_date_is_sold_out": True,
+            "auto_reload_coming_soon_page": True,
+        },
+        "advanced": {
+            "play_sound": {
+                "ticket": True,
+                "order": True,
+                "filename": CONST_CAPTCHA_SOUND_FILENAME_DEFAULT,
+            },
+            "email": {
+                "ticket": True,
+                "order": True,
+                "apppassword": "",
+                "sender_email": "",
+                "receiver_email": "",
+                "subject": "號外",
+                "message": "這是一封寫給自己的信。",
+            },
+            "tixcraft_sid": "",
+            "ibonqware": "",
+            "facebook_account": "",
+            "kktix_account": "",
+            "fami_account": "",
+            "cityline_account": "",
+            "urbtix_account": "",
+            "hkticketing_account": "",
+            "kham_account": "",
+            "ticket_account": "",
+            "udn_account": "",
+            "ticketplus_account": "",
+            "facebook_password": "",
+            "kktix_password": "",
+            "fami_password": "",
+            "urbtix_password": "",
+            "cityline_password": "",
+            "hkticketing_password": "",
+            "kham_password": "",
+            "ticket_password": "",
+            "udn_password": "",
+            "ticketplus_password": "",
+            "facebook_password_plaintext": "",
+            "kktix_password_plaintext": "",
+            "fami_password_plaintext": "",
+            "urbtix_password_plaintext": "",
+            "cityline_password_plaintext": "",
+            "hkticketing_password_plaintext": "",
+            "kham_password_plaintext": "",
+            "ticket_password_plaintext": "",
+            "udn_password_plaintext": "",
+            "ticketplus_password_plaintext": "",
+            "chrome_extension": True,
+            "disable_adjacent_seat": False,
+            "adblock": True,
+            "hide_some_image": False,
+            "block_facebook_network": False,
+            "headless": False,
+            "verbose": False,
+            "auto_guess_options": False,
+            "user_guess_string": "",
+            "remote_url": f"http://127.0.0.1:{CONST_SERVER_PORT}/",
+            "auto_reload_page_interval": 0.1,
+            "auto_reload_overheat_count": 4,
+            "auto_reload_overheat_cd": 1.0,
+            "reset_browser_interval": 0,
+            "proxy_server_port": "",
+            "window_size": "480,1024",
+            "idle_keyword": "",
+            "resume_keyword": "",
+            "idle_keyword_second": "",
+            "resume_keyword_second": "",
+        },
+    }
     return config_dict
 
 def read_last_url_from_file():
@@ -3349,7 +3343,7 @@ class OcrHandler(tornado.web.RequestHandler):
 
         self.write({"answer": ocr_answer})
 
-async def main_server():
+async def main_server(server_port):
     ocr = None
     try:
         ocr = ddddocr.DdddOcr(show_ad=False, beta=True)
@@ -3369,17 +3363,20 @@ async def main_server():
     app.ocr = ocr;
     app.version = CONST_APP_VERSION;
 
-    app.listen(CONST_SERVER_PORT)
-    print("server running on port:", CONST_SERVER_PORT)
+    app.listen(server_port)
+    print("server running on port:", server_port)
     await asyncio.Event().wait()
 
 def web_server():
-    is_port_binded = util.is_connectable(CONST_SERVER_PORT)
+    _, config_dict = load_json()
+    server_port = config_dict["port"]
+
+    is_port_binded = util.is_connectable(server_port)
     #print("is_port_binded:", is_port_binded)
     if not is_port_binded:
-        asyncio.run(main_server())
+        asyncio.run(main_server(server_port))
     else:
-        print("port:", CONST_SERVER_PORT, " is in used.")
+        print("port:", server_port, " is in used.")
 
 def preview_question_text_file():
     if os.path.exists(CONST_MAXBOT_QUESTION_FILE):

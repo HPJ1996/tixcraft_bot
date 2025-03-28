@@ -159,15 +159,20 @@ function load_settins_to_form(settings) {
         ocr_captcha_image_source.value = settings.ocr_captcha.image_source;
         ocr_captcha_force_submit.checked = settings.ocr_captcha.force_submit;
 
-        let remote_url_string = "";
-        let remote_url_array = [];
-        if (settings.advanced.remote_url.length > 0) {
-            remote_url_array = JSON.parse('[' + settings.advanced.remote_url + ']');
+        let remoteUrlString = "";
+        const remoteUrlValue = settings.advanced.remote_url;
+        if (remoteUrlValue && remoteUrlValue.length > 0) {
+            try {
+                const parsedUrls = JSON.parse(`[${remoteUrlValue.includes('"') ? remoteUrlValue : `"${remoteUrlValue}"`}]`);
+                if (parsedUrls.length > 0) {
+                    remoteUrlString = parsedUrls[0];
+                }
+            } catch (error) {
+                console.error("Error parsing remote URL:", error);
+                // 如果解析失敗，remoteUrlString 保持為空字串，或者您可以選擇設定為預設值或顯示錯誤訊息
+            }
         }
-        if (remote_url_array.length) {
-            remote_url_string = remote_url_array[0];
-        }
-        remote_url.value = remote_url_string;
+        remote_url.value = remoteUrlString;
 
         // dictionary
         user_guess_string.value = settings.advanced.user_guess_string;
@@ -223,7 +228,10 @@ function load_settins_to_form(settings) {
 }
 
 function maxbot_load_api() {
-    let api_url = "http://127.0.0.1:16888/load";
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+    let api_url = `${protocol}//${hostname}${port ? `:${port}` : ""}/load`;
     $.get(api_url, function() {
             //alert( "success" );
         })
@@ -242,7 +250,10 @@ function maxbot_load_api() {
 }
 
 function maxbot_reset_api() {
-    let api_url = "http://127.0.0.1:16888/reset";
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+    let api_url = `${protocol}//${hostname}${port ? `:${port}` : ""}/reset`;
     $.get(api_url, function() {
             //alert( "success" );
         })
@@ -293,7 +304,10 @@ function maxbot_launch() {
 }
 
 function maxbot_run_api() {
-    let api_url = "http://127.0.0.1:16888/run";
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+    let api_url = `${protocol}//${hostname}${port ? `:${port}` : ""}/run`;
     $.get(api_url, function() {
             //alert( "success" );
         })
@@ -309,7 +323,11 @@ function maxbot_run_api() {
 }
 
 function maxbot_shutdown_api() {
-    let api_url = "http://127.0.0.1:16888/shutdown";
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+    let api_url = `${protocol}//${hostname}${port ? `:${port}` : ""}/shutdown`;
+
     $.get(api_url, function() {
             //alert( "success" );
         })
@@ -461,7 +479,10 @@ function save_changes_to_dict(silent_flag) {
 }
 
 function maxbot_save_api(callback) {
-    let api_url = "http://127.0.0.1:16888/save";
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+    let api_url = `${protocol}//${hostname}${port ? `:${port}` : ""}/save`;
     if (settings) {
         $.post(api_url, JSON.stringify(settings), function() {
                 //alert( "success" );
@@ -481,7 +502,10 @@ function maxbot_save_api(callback) {
 }
 
 function maxbot_pause_api() {
-    let api_url = "http://127.0.0.1:16888/pause";
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+    let api_url = `${protocol}//${hostname}${port ? `:${port}` : ""}/pause`;
     if (settings) {
         $.get(api_url, function() {
                 //alert( "success" );
@@ -499,7 +523,10 @@ function maxbot_pause_api() {
 }
 
 function maxbot_resume_api() {
-    let api_url = "http://127.0.0.1:16888/resume";
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+    let api_url = `${protocol}//${hostname}${port ? `:${port}` : ""}/resume`;
     if (settings) {
         $.get(api_url, function() {
                 //alert( "success" );
@@ -638,7 +665,10 @@ function homepage_onchange() {
 
 
 function maxbot_status_api() {
-    let api_url = "http://127.0.0.1:16888/status";
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+    let api_url = `${protocol}//${hostname}${port ? `:${port}` : ""}/status`;
     $.get(api_url, function() {
             //alert( "success" );
         })
@@ -667,7 +697,10 @@ function maxbot_status_api() {
 }
 
 function maxbot_version_api() {
-    let api_url = "http://127.0.0.1:16888/version";
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+    let api_url = `${protocol}//${hostname}${port ? `:${port}` : ""}/version`;
     $.get(api_url, function() {
             //alert( "success" );
         })
